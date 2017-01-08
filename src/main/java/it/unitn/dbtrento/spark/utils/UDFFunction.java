@@ -1,0 +1,297 @@
+package it.unitn.dbtrento.spark.utils;
+
+import org.apache.spark.sql.api.java.*;
+import org.apache.spark.sql.types.DataType;
+
+public class UDFFunction {
+
+  private String name;
+  private UDF1<?, ?> udf1;
+  private UDF2<?, ?, ?> udf2;
+  private UDF3<?, ?, ?, ?> udf3;
+  private UDF4<?, ?, ?, ?, ?> udf4;
+  private UDF5<?, ?, ?, ?, ?, ?> udf5;
+  private UDF6<?, ?, ?, ?, ?, ?, ?> udf6;
+  private UDF7<?, ?, ?, ?, ?, ?, ?, ?> udf7;
+  private UDF8<?, ?, ?, ?, ?, ?, ?, ?, ?> udf8;
+  private UDF9<?, ?, ?, ?, ?, ?, ?, ?, ?, ?> udf9;
+  private UDF10<?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?> udf10;
+  private UDF11<?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?> udf11;
+  private UDF12<?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?> udf12;
+  private UDF13<?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?> udf13;
+  private UDF14<?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?> udf14;
+  private UDF15<?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?> udf15;
+  private UDF16<?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?> udf16;
+  private UDF17<?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?> udf17;
+  private UDF18<?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?> udf18;
+  private UDF19<?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?> udf19;
+  private UDF20<?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?> udf20;
+  private UDF21<?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?> udf21;
+  private UDF22<?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?> udf22;
+  private DataType dataType;
+
+  public UDFFunction(String name, UDF1<?, ?> udf, DataType dataType) {
+    super();
+    this.name = name;
+    this.udf1 = udf;
+    this.dataType = dataType;
+  }
+
+  public UDFFunction(String name, UDF2<?, ?, ?> udf, DataType dataType) {
+    super();
+    this.name = name;
+    this.udf2 = udf;
+    this.dataType = dataType;
+  }
+
+  public UDFFunction(String name, UDF3<?, ?, ?, ?> udf, DataType dataType) {
+    super();
+    this.name = name;
+    this.udf3 = udf;
+    this.dataType = dataType;
+  }
+
+  public UDFFunction(String name, UDF4<?, ?, ?, ?, ?> udf, DataType dataType) {
+    super();
+    this.name = name;
+    this.udf4 = udf;
+    this.dataType = dataType;
+  }
+
+  public UDFFunction(String name, UDF5<?, ?, ?, ?, ?, ?> udf, DataType dataType) {
+    super();
+    this.name = name;
+    this.udf5 = udf;
+    this.dataType = dataType;
+  }
+
+  public UDFFunction(String name, UDF6<?, ?, ?, ?, ?, ?, ?> udf, DataType dataType) {
+    super();
+    this.name = name;
+    this.udf6 = udf;
+    this.dataType = dataType;
+  }
+
+  public UDFFunction(String name, UDF7<?, ?, ?, ?, ?, ?, ?, ?> udf, DataType dataType) {
+    super();
+    this.name = name;
+    this.udf7 = udf;
+    this.dataType = dataType;
+  }
+
+  public UDFFunction(String name, UDF8<?, ?, ?, ?, ?, ?, ?, ?, ?> udf, DataType dataType) {
+    super();
+    this.name = name;
+    this.udf8 = udf;
+    this.dataType = dataType;
+  }
+
+  public UDFFunction(String name, UDF9<?, ?, ?, ?, ?, ?, ?, ?, ?, ?> udf, DataType dataType) {
+    super();
+    this.name = name;
+    this.udf9 = udf;
+    this.dataType = dataType;
+  }
+
+  public UDFFunction(String name, UDF10<?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?> udf, DataType dataType) {
+    super();
+    this.name = name;
+    this.udf10 = udf;
+    this.dataType = dataType;
+  }
+
+  public UDFFunction(String name, UDF11<?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?> udf,
+      DataType dataType) {
+    super();
+    this.name = name;
+    this.udf11 = udf;
+    this.dataType = dataType;
+  }
+
+  public UDFFunction(String name, UDF12<?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?> udf,
+      DataType dataType) {
+    super();
+    this.name = name;
+    this.udf12 = udf;
+    this.dataType = dataType;
+  }
+
+  public UDFFunction(String name, UDF13<?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?> udf,
+      DataType dataType) {
+    super();
+    this.name = name;
+    this.udf13 = udf;
+    this.dataType = dataType;
+  }
+
+  public UDFFunction(String name, UDF14<?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?> udf,
+      DataType dataType) {
+    super();
+    this.name = name;
+    this.udf14 = udf;
+    this.dataType = dataType;
+  }
+
+  public UDFFunction(String name, UDF15<?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?> udf,
+      DataType dataType) {
+    super();
+    this.name = name;
+    this.udf15 = udf;
+    this.dataType = dataType;
+  }
+
+  public UDFFunction(String name, UDF16<?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?> udf,
+      DataType dataType) {
+    super();
+    this.name = name;
+    this.udf16 = udf;
+    this.dataType = dataType;
+  }
+
+  public UDFFunction(String name, UDF17<?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?> udf,
+      DataType dataType) {
+    super();
+    this.name = name;
+    this.udf17 = udf;
+    this.dataType = dataType;
+  }
+
+  public UDFFunction(String name,
+      UDF18<?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?> udf, DataType dataType) {
+    super();
+    this.name = name;
+    this.udf18 = udf;
+    this.dataType = dataType;
+  }
+
+  public UDFFunction(String name,
+      UDF19<?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?> udf, DataType dataType) {
+    super();
+    this.name = name;
+    this.udf19 = udf;
+    this.dataType = dataType;
+  }
+
+  public UDFFunction(String name,
+      UDF20<?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?> udf, DataType dataType) {
+    super();
+    this.name = name;
+    this.udf20 = udf;
+    this.dataType = dataType;
+  }
+
+  public UDFFunction(String name,
+      UDF21<?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?> udf,
+      DataType dataType) {
+    super();
+    this.name = name;
+    this.udf21 = udf;
+    this.dataType = dataType;
+  }
+
+  public UDFFunction(String name,
+      UDF22<?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?> udf,
+      DataType dataType) {
+    super();
+    this.name = name;
+    this.udf22 = udf;
+    this.dataType = dataType;
+  }
+
+  public String getName() {
+    return this.name;
+  }
+
+  public DataType getDataType() {
+    return this.dataType;
+  }
+
+  public UDF1<?, ?> getUDF1() {
+    return this.udf1;
+  }
+
+  public UDF2<?, ?, ?> getUDF2() {
+    return this.udf2;
+  }
+
+  public UDF3<?, ?, ?, ?> getUDF3() {
+    return this.udf3;
+  }
+
+  public UDF4<?, ?, ?, ?, ?> getUDF4() {
+    return this.udf4;
+  }
+
+  public UDF5<?, ?, ?, ?, ?, ?> getUDF5() {
+    return this.udf5;
+  }
+
+  public UDF6<?, ?, ?, ?, ?, ?, ?> getUDF6() {
+    return this.udf6;
+  }
+
+  public UDF7<?, ?, ?, ?, ?, ?, ?, ?> getUDF7() {
+    return this.udf7;
+  }
+
+  public UDF8<?, ?, ?, ?, ?, ?, ?, ?, ?> getUDF8() {
+    return this.udf8;
+  }
+
+  public UDF9<?, ?, ?, ?, ?, ?, ?, ?, ?, ?> getUDF9() {
+    return this.udf9;
+  }
+
+  public UDF10<?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?> getUDF10() {
+    return this.udf10;
+  }
+
+  public UDF11<?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?> getUDF11() {
+    return this.udf11;
+  }
+
+  public UDF12<?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?> getUDF12() {
+    return this.udf12;
+  }
+
+  public UDF13<?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?> getUDF13() {
+    return this.udf13;
+  }
+
+  public UDF14<?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?> getUDF14() {
+    return this.udf14;
+  }
+
+  public UDF15<?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?> getUDF15() {
+    return this.udf15;
+  }
+
+  public UDF16<?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?> getUDF16() {
+    return this.udf16;
+  }
+
+  public UDF17<?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?> getUDF17() {
+    return this.udf17;
+  }
+
+  public UDF18<?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?> getUDF18() {
+    return this.udf18;
+  }
+
+  public UDF19<?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?> getUDF19() {
+    return this.udf19;
+  }
+
+  public UDF20<?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?> getUDF20() {
+    return this.udf20;
+  }
+
+  public UDF21<?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?> getUDF21() {
+    return this.udf21;
+  }
+
+  public UDF22<?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?> getUDF22() {
+    return this.udf22;
+  }
+
+}
