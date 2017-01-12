@@ -13,10 +13,10 @@ public class SparkReader {
   public static Dataset<Row> read(SparkSession spark, String inputPath, boolean hasHeader,
       InputFormat inputFormat) {
     if (inputPath == null) {
-      System.out.println("Not able to read the data...");
+      System.err.println("Not able to read the data...");
       return null;
     } else if (inputPath.isEmpty()) {
-      System.out.println("The input path is empty, thus it can not be read...");
+      System.err.println("The input path is empty, thus it can not be read...");
       return null;
     }
 
@@ -49,10 +49,10 @@ public class SparkReader {
   public static Dataset<Row> read(SparkSession spark, String inputPath, String regex,
       boolean hasHeader, InputFormat inputFormat) {
     if (inputPath == null) {
-      System.out.println("Not able to read the data...");
+      System.err.println("Not able to read the data...");
       return null;
     } else if (inputPath.isEmpty()) {
-      System.out.println("The input path is empty, thus it can not be read...");
+      System.err.println("The input path is empty, thus it can not be read...");
       return null;
     }
 

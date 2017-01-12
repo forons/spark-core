@@ -43,12 +43,13 @@ public class QueriesExecutor {
       result = spark.sql(tup._2);
     } catch (Exception e) {
       System.out.println("======================================");
-      System.out.println("======================================");
       System.out.println(tup._1);
+      System.out.println("======================================");
       System.out.println("======================================");
       System.out.println(tup._2);
       System.out.println("======================================");
       System.out.println("======================================");
+      e.printStackTrace();
     }
     return result;
   }
@@ -129,7 +130,7 @@ public class QueriesExecutor {
     while ((line = br.readLine()) != null) {
       queryBuilder.append(line + "\n");
     }
-    br.close();
+    // br.close();
     return queryBuilder.toString();
   }
 
@@ -144,9 +145,12 @@ public class QueriesExecutor {
       while ((line = br.readLine()) != null) {
         content = content.append(line + "\n");
       }
+    } catch (Exception e) {
+      System.out.println("HDFSPATH:\t----------------->\t" + hdfsPath);
+      e.printStackTrace();
     } finally {
-      br.close();
-      fs.close();
+      // br.close();
+      // fs.close();
     }
     return content.toString().trim();
   }

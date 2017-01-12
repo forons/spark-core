@@ -15,6 +15,9 @@ public class SparkProjector {
   protected static Dataset<Row> project(Dataset<Row> data, List<String> colsToKeep) {
     String[] cols = data.columns();
     List<Column> colsToKeepNames = new ArrayList<>();
+    if (colsToKeep == null) {
+      return data;
+    }
     for (String col : colsToKeep) {
       String c = null;
       try {

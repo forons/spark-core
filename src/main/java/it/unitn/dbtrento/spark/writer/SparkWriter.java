@@ -1,5 +1,8 @@
 package it.unitn.dbtrento.spark.writer;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.commons.lang.NotImplementedException;
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
@@ -22,12 +25,14 @@ public class SparkWriter {
       System.out.println("Not able to write the data...");
       return false;
     }
+    Map<String, String> options = new HashMap<>();
+    options.put("header", String.valueOf(hasHeader));
     switch (outputFormat) {
       case CSV:
-        data.write().mode(SaveMode.Overwrite).format("csv").save(outputPath);
+        data.write().options(options).mode(SaveMode.Overwrite).csv(outputPath);
         return true;
       case PARQUET:
-        data.write().mode(SaveMode.Overwrite).save(outputPath);
+        data.write().options(options).mode(SaveMode.Overwrite).save(outputPath);
         return true;
       case SINGLE:
         throw new NotImplementedException("Method not yet implemented...");

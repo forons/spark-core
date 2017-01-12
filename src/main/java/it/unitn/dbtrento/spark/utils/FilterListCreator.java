@@ -45,7 +45,7 @@ public class FilterListCreator {
         }
       }
     } catch (IOException e) {
-      System.out.println(filePath + " not found!");
+      // System.out.println(filePath + " not found!");
       return null;
     }
     return filterList;
@@ -71,7 +71,7 @@ public class FilterListCreator {
       br.close();
       fs.close();
     } catch (IOException | URISyntaxException e) {
-      System.out.println(hdfsPath + " not found!");
+      // System.out.println(hdfsPath + " not found!");
       return null;
     }
     return filterList;
@@ -103,7 +103,7 @@ public class FilterListCreator {
         }
       }
     } catch (IOException e) {
-      e.printStackTrace();
+      return null;
     }
     return colList;
   }
@@ -126,7 +126,6 @@ public class FilterListCreator {
       br.close();
       fs.close();
     } catch (IOException | URISyntaxException e) {
-      System.out.println(hdfsPath + " not found!");
       return null;
     }
     return colList;
