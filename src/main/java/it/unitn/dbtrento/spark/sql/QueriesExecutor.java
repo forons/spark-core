@@ -23,17 +23,6 @@ import scala.Tuple2;
 
 public class QueriesExecutor {
 
-  public static boolean registerTables(List<Tuple2<Dataset<Row>, String>> tablesName) {
-    try {
-      for (Tuple2<Dataset<Row>, String> tup : tablesName) {
-        tup._1.createOrReplaceTempView(tup._2);
-      }
-    } catch (Exception e) {
-      return false;
-    }
-    return true;
-  }
-
   public static Dataset<Row> executeQuery(SparkSession spark, String basePath, String queryFilePath,
       FileSystemType fs) throws IOException, URISyntaxException {
     Tuple2<String, String> tup = new Tuple2<>(new File(queryFilePath).getName(),
@@ -42,13 +31,13 @@ public class QueriesExecutor {
     try {
       result = spark.sql(tup._2);
     } catch (Exception e) {
-      System.out.println("======================================");
-      System.out.println(tup._1);
-      System.out.println("======================================");
-      System.out.println("======================================");
-      System.out.println(tup._2);
-      System.out.println("======================================");
-      System.out.println("======================================");
+      System.err.println("======================================");
+      System.err.println(tup._1);
+      System.err.println("======================================");
+      System.err.println("======================================");
+      System.err.println(tup._2);
+      System.err.println("======================================");
+      System.err.println("======================================");
       e.printStackTrace();
     }
     return result;
@@ -130,7 +119,7 @@ public class QueriesExecutor {
     while ((line = br.readLine()) != null) {
       queryBuilder.append(line + "\n");
     }
-    // br.close();
+    br.close();
     return queryBuilder.toString();
   }
 
@@ -146,14 +135,12 @@ public class QueriesExecutor {
         content = content.append(line + "\n");
       }
     } catch (Exception e) {
-      System.out.println("HDFSPATH:\t----------------->\t" + hdfsPath);
+      System.err.println("HDFSPATH:\t----------------->\t" + hdfsPath);
       e.printStackTrace();
     } finally {
-      // br.close();
-      // fs.close();
+      br.close();
+      fs.close();
     }
     return content.toString().trim();
   }
-
-
 }
