@@ -32,7 +32,7 @@ public class QueriesExecutor {
       result = spark.sql(tup._2);
     } catch (Exception e) {
       System.err.println("======================================");
-      System.err.println(tup._1);
+      System.err.println("Exceotion " + e.getMessage() + " in query " + tup._1);
       System.err.println("======================================");
       System.err.println("======================================");
       System.err.println(tup._2);
@@ -135,11 +135,10 @@ public class QueriesExecutor {
         content = content.append(line + "\n");
       }
     } catch (Exception e) {
-      System.err.println("HDFSPATH:\t----------------->\t" + hdfsPath);
-      e.printStackTrace();
+      System.err.println("File not found " + hdfsPath);
     } finally {
       br.close();
-      fs.close();
+      // fs.close();
     }
     return content.toString().trim();
   }
