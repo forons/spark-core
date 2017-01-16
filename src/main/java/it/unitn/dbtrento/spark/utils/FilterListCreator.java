@@ -38,14 +38,12 @@ public class FilterListCreator {
     List<Tuple2<String, String>> filterList = new ArrayList<>();
     try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
       while ((line = br.readLine()) != null) {
-        // use comma as separator
         String[] row = line.split(cvsSplitBy);
         if (row.length == 2) {
           filterList.add(new Tuple2<>(row[0], row[1]));
         }
       }
     } catch (IOException e) {
-      // System.out.println(filePath + " not found!");
       return null;
     }
     return filterList;
@@ -62,16 +60,12 @@ public class FilterListCreator {
       String cvsSplitBy = ",";
       filterList = new ArrayList<>();
       while ((line = br.readLine()) != null) {
-        // use comma as separator
         String[] row = line.split(cvsSplitBy);
         if (row.length == 2) {
           filterList.add(new Tuple2<>(row[0], row[1]));
         }
       }
-      br.close();
-      fs.close();
     } catch (IOException | URISyntaxException e) {
-      // System.out.println(hdfsPath + " not found!");
       return null;
     }
     return filterList;
@@ -123,8 +117,6 @@ public class FilterListCreator {
           colList.add(line.trim());
         }
       }
-      br.close();
-      fs.close();
     } catch (IOException | URISyntaxException e) {
       return null;
     }

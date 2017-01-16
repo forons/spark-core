@@ -114,12 +114,16 @@ public class QueriesExecutor {
 
   private static String readQueryFromFS(String file) throws FileNotFoundException, IOException {
     StringBuilder queryBuilder = new StringBuilder();
-    BufferedReader br = new BufferedReader(new FileReader(file));
-    String line;
-    while ((line = br.readLine()) != null) {
-      queryBuilder.append(line + "\n");
+    BufferedReader br = null;
+    try {
+      br = new BufferedReader(new FileReader(file));
+      String line;
+      while ((line = br.readLine()) != null) {
+        queryBuilder.append(line + "\n");
+      }
+    } catch (Exception e) {
+      System.err.println("File not found " + file);
     }
-    br.close();
     return queryBuilder.toString();
   }
 
@@ -136,9 +140,6 @@ public class QueriesExecutor {
       }
     } catch (Exception e) {
       System.err.println("File not found " + hdfsPath);
-    } finally {
-      br.close();
-      // fs.close();
     }
     return content.toString().trim();
   }
