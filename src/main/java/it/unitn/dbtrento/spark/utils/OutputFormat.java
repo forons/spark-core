@@ -1,5 +1,5 @@
 package it.unitn.dbtrento.spark.utils;
 
 public enum OutputFormat {
-  CSV, PARQUET, SINGLE
+  CSV, PARQUET, SINGLE_CSV
 }

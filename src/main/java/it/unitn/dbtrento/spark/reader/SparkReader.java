@@ -1,5 +1,6 @@
 package it.unitn.dbtrento.spark.reader;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -100,23 +101,27 @@ public class SparkReader {
     options.put("header", String.valueOf(hasHeader));
     Dataset<Row> data = null;
     Seq<String> elements = JavaConversions.asScalaBuffer(inputPath).seq();
-    switch (inputFormat) {
-      case CSV:
-        data = spark.read().options(options).csv(elements);
-        break;
-      case PARQUET:
-        data = spark.read().options(options).load(elements);
-        break;
-      case TSV:
-        options.put("sep", "\t");
-        data = spark.read().options(options).csv(elements);
-        break;
-      case SSV:
-        options.put("sep", ";");
-        data = spark.read().options(options).csv(elements);
-        break;
-      default:
-        break;
+    try {
+      switch (inputFormat) {
+        case CSV:
+          data = spark.read().options(options).csv(elements);
+          break;
+        case PARQUET:
+          data = spark.read().options(options).load(elements);
+          break;
+        case TSV:
+          options.put("sep", "\t");
+          data = spark.read().options(options).csv(elements);
+          break;
+        case SSV:
+          options.put("sep", ";");
+          data = spark.read().options(options).csv(elements);
+          break;
+        default:
+          break;
+      }
+    } catch (UnsupportedOperationException e) {
+      System.err.println(e.getMessage() + " while reading the data from " + inputPath.toString());
     }
     return data;
   }
