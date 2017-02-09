@@ -1,9 +1,11 @@
 package it.unitn.dbtrento.spark.reader;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.hadoop.conf.Configuration;
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
 import org.apache.spark.sql.SparkSession;
@@ -13,8 +15,8 @@ import scala.collection.JavaConversions;
 import scala.collection.Seq;
 
 public class SparkReader {
-  public static Dataset<Row> read(SparkSession spark, String inputPath, boolean hasHeader,
-      InputFormat inputFormat) {
+  public static Dataset<Row> read(SparkSession spark, boolean hasHeader, boolean inferSchema,
+      InputFormat inputFormat, String inputPath) {
     if (inputPath == null) {
       System.err.println("Not able to read the data...");
       return null;
@@ -22,35 +24,15 @@ public class SparkReader {
       System.err.println("The input path is empty, thus it can not be read...");
       return null;
     }
-
     Map<String, String> options = new HashMap<>();
-    options.put("inferSchema", "false");
     options.put("header", String.valueOf(hasHeader));
-    Dataset<Row> data = null;
-
-    switch (inputFormat) {
-      case CSV:
-        data = spark.read().options(options).csv(inputPath);
-        break;
-      case PARQUET:
-        data = spark.read().options(options).load(inputPath);
-        break;
-      case TSV:
-        options.put("sep", "\t");
-        data = spark.read().options(options).csv(inputPath);
-        break;
-      case SSV:
-        options.put("sep", ";");
-        data = spark.read().options(options).csv(inputPath);
-        break;
-      default:
-        break;
-    }
+    options.put("inferSchema", String.valueOf(inferSchema));
+    Dataset<Row> data = read(spark, options, inputFormat, inputPath);
     return data;
   }
 
-  public static Dataset<Row> read(SparkSession spark, Seq<String> inputPath, boolean hasHeader,
-      InputFormat inputFormat) {
+  public static Dataset<Row> read(SparkSession spark, boolean hasHeader, boolean inferSchema,
+      InputFormat inputFormat, Seq<String> inputPath) {
     if (inputPath == null) {
       System.err.println("Not able to read the data...");
       return null;
@@ -58,35 +40,19 @@ public class SparkReader {
       System.err.println("The input path is empty, thus it can not be read...");
       return null;
     }
-
+    Configuration configuration = new Configuration();
+    configuration.set("fs.hdfs.impl", org.apache.hadoop.hdfs.DistributedFileSystem.class.getName());
+    configuration.set("fs.file.impl", org.apache.hadoop.fs.LocalFileSystem.class.getName());
     Map<String, String> options = new HashMap<>();
-    options.put("inferSchema", "false");
     options.put("header", String.valueOf(hasHeader));
-    Dataset<Row> data = null;
+    options.put("inferSchema", String.valueOf(inferSchema));
 
-    switch (inputFormat) {
-      case CSV:
-        data = spark.read().options(options).csv(inputPath);
-        break;
-      case PARQUET:
-        data = spark.read().options(options).load(inputPath);
-        break;
-      case TSV:
-        options.put("sep", "\t");
-        data = spark.read().options(options).csv(inputPath);
-        break;
-      case SSV:
-        options.put("sep", ";");
-        data = spark.read().options(options).csv(inputPath);
-        break;
-      default:
-        break;
-    }
+    Dataset<Row> data = read(spark, options, inputFormat, inputPath);
     return data;
   }
 
-  public static Dataset<Row> read(SparkSession spark, List<String> inputPath, boolean hasHeader,
-      InputFormat inputFormat) {
+  public static Dataset<Row> read(SparkSession spark, boolean hasHeader, boolean inferSchema,
+      InputFormat inputFormat, List<String> inputPath) {
     if (inputPath == null) {
       System.err.println("Not able to read the data...");
       return null;
@@ -94,27 +60,53 @@ public class SparkReader {
       System.err.println("The input path is empty, thus it can not be read...");
       return null;
     }
+    Configuration configuration = new Configuration();
+    configuration.set("fs.hdfs.impl", org.apache.hadoop.hdfs.DistributedFileSystem.class.getName());
+    configuration.set("fs.file.impl", org.apache.hadoop.fs.LocalFileSystem.class.getName());
 
     Map<String, String> options = new HashMap<>();
-    options.put("inferSchema", "false");
     options.put("header", String.valueOf(hasHeader));
-    Dataset<Row> data = null;
+    options.put("inferSchema", String.valueOf(inferSchema));
     Seq<String> elements = JavaConversions.asScalaBuffer(inputPath).seq();
+    Dataset<Row> data = read(spark, options, inputFormat, elements);
+    return data;
+  }
+
+  public static Dataset<Row> read(SparkSession spark, boolean hasHeader, boolean inferSchema,
+      InputFormat inputFormat, String... inputPath) {
+    if (inputPath == null) {
+      System.err.println("Not able to read the data...");
+      return null;
+    }
+    Configuration configuration = new Configuration();
+    configuration.set("fs.hdfs.impl", org.apache.hadoop.hdfs.DistributedFileSystem.class.getName());
+    configuration.set("fs.file.impl", org.apache.hadoop.fs.LocalFileSystem.class.getName());
+
+    Map<String, String> options = new HashMap<>();
+    options.put("header", String.valueOf(hasHeader));
+    options.put("inferSchema", String.valueOf(inferSchema));
+    Dataset<Row> data = read(spark, options, inputFormat, inputPath);
+    return data;
+  }
+
+  public static Dataset<Row> read(SparkSession spark, Map<String, String> options,
+      InputFormat inputFormat, Seq<String> inputPath) {
+    Dataset<Row> data = null;
     try {
       switch (inputFormat) {
         case CSV:
-          data = spark.read().options(options).csv(elements);
+          data = spark.read().options(options).csv(inputPath);
           break;
         case PARQUET:
-          data = spark.read().options(options).load(elements);
+          data = spark.read().options(options).load(inputPath);
           break;
         case TSV:
           options.put("sep", "\t");
-          data = spark.read().options(options).csv(elements);
+          data = spark.read().options(options).csv(inputPath);
           break;
         case SSV:
           options.put("sep", ";");
-          data = spark.read().options(options).csv(elements);
+          data = spark.read().options(options).csv(inputPath);
           break;
         default:
           break;
@@ -125,36 +117,33 @@ public class SparkReader {
     return data;
   }
 
-  public static Dataset<Row> read(SparkSession spark, boolean hasHeader, InputFormat inputFormat,
-      String... inputPath) {
-    if (inputPath == null) {
-      System.err.println("Not able to read the data...");
-      return null;
-    }
-
-    Map<String, String> options = new HashMap<>();
-    options.put("inferSchema", "false");
-    options.put("header", String.valueOf(hasHeader));
+  public static Dataset<Row> read(SparkSession spark, Map<String, String> options,
+      InputFormat inputFormat, String... inputPath) {
     Dataset<Row> data = null;
-
-    switch (inputFormat) {
-      case CSV:
-        data = spark.read().options(options).csv(inputPath);
-        break;
-      case PARQUET:
-        data = spark.read().options(options).load(inputPath);
-        break;
-      case TSV:
-        options.put("sep", "\t");
-        data = spark.read().options(options).csv(inputPath);
-        break;
-      case SSV:
-        options.put("sep", ";");
-        data = spark.read().options(options).csv(inputPath);
-        break;
-      default:
-        break;
+    try {
+      switch (inputFormat) {
+        case CSV:
+          data = spark.read().options(options).csv(inputPath);
+          break;
+        case PARQUET:
+          data = spark.read().options(options).load(inputPath);
+          break;
+        case TSV:
+          options.put("sep", "\t");
+          data = spark.read().options(options).csv(inputPath);
+          break;
+        case SSV:
+          options.put("sep", ";");
+          data = spark.read().options(options).csv(inputPath);
+          break;
+        default:
+          break;
+      }
+    } catch (UnsupportedOperationException e) {
+      System.err
+          .println(e.getMessage() + " while reading the data from " + Arrays.toString(inputPath));
     }
     return data;
   }
+
 }
