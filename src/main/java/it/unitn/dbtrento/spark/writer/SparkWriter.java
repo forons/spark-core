@@ -21,6 +21,25 @@ public class SparkWriter {
 
   public static boolean write(SparkSession spark, Dataset<Row> data, boolean hasHeader,
       String outputPath, OutputFormat outputFormat) {
+    Map<String, String> options = new HashMap<>();
+    options.put("header", String.valueOf(hasHeader));
+    return write(spark, data, options, outputPath, outputFormat);
+  }
+
+  public static boolean write(SparkSession spark, Dataset<Row> data, boolean hasHeader,
+      String outputPath, OutputFormat outputFormat, String outputFile) {
+    Map<String, String> options = new HashMap<>();
+    options.put("header", String.valueOf(hasHeader));
+    return write(spark, data, options, outputPath, outputFormat, outputFile);
+  }
+
+  public static boolean write(SparkSession spark, Dataset<Row> data, Map<String, String> options,
+      String outputPath, OutputFormat outputFormat) {
+    return write(spark, data, options, outputPath, outputFormat, "output");
+  }
+
+  public static boolean write(SparkSession spark, Dataset<Row> data, Map<String, String> options,
+      String outputPath, OutputFormat outputFormat, String outputFile) {
     if (data == null) {
       System.out.println("Not able to write the data...");
       return false;
@@ -31,13 +50,6 @@ public class SparkWriter {
       System.out.println("Not able to write the data...");
       return false;
     }
-    Map<String, String> options = new HashMap<>();
-    options.put("header", String.valueOf(hasHeader));
-    return write(spark, data, options, outputPath, outputFormat);
-  }
-
-  public static boolean write(SparkSession spark, Dataset<Row> data, Map<String, String> options,
-      String outputPath, OutputFormat outputFormat) {
     try {
       switch (outputFormat) {
         case CSV:
@@ -53,8 +65,9 @@ public class SparkWriter {
             FileUtil.copyMerge(
                 FileSystem.get(new URI(outputPath + "/partial/"), new Configuration()),
                 new Path(outputPath + "/partial/"),
-                FileSystem.get(new URI(outputPath + "/output.csv"), new Configuration()),
-                new Path(outputPath + "/output.csv"), true,
+                FileSystem.get(new URI(outputPath + "/" + outputFile + ".csv"),
+                    new Configuration()),
+                new Path(outputPath + "/" + outputFile + ".csv"), true,
                 spark.sparkContext().hadoopConfiguration(), null);
           } catch (IllegalArgumentException | IOException | URISyntaxException e) {
             System.err.println("Error " + e.getMessage() + "while writing the data");
