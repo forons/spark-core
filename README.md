@@ -2,6 +2,10 @@
 The goal of this project is to fulfil the user needs over the standard libs of [Apache Spark](http://spark.apache.org/).
 This project is maintained from the [DBTrento group](http://db.disi.unitn.eu) of the University of Trento.
 
+## TO-DO
+* Add tests
+* Add JavaDoc
+
 ## Developers 
 * [Daniele Foroni](http://disi.unitn.it/~foroni)
 * Paolo Sottovia
