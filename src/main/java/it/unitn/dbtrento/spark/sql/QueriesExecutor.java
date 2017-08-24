@@ -32,7 +32,7 @@ public class QueriesExecutor {
       result = spark.sql(tup._2);
     } catch (Exception e) {
       System.err.println("======================================");
-      System.err.println("Exceotion " + e.getMessage() + " in query " + tup._1);
+      System.err.println("Exception " + e.getMessage() + " in query " + tup._1);
       System.err.println("======================================");
       System.err.println("======================================");
       System.err.println(tup._2);

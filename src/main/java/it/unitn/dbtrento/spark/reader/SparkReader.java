@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.hdfs.DistributedFileSystem;
+import org.apache.hadoop.fs.LocalFileSystem;
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
 import org.apache.spark.sql.SparkSession;
@@ -41,8 +43,9 @@ public class SparkReader {
       return null;
     }
     Configuration configuration = new Configuration();
-    configuration.set("fs.hdfs.impl", org.apache.hadoop.hdfs.DistributedFileSystem.class.getName());
-    configuration.set("fs.file.impl", org.apache.hadoop.fs.LocalFileSystem.class.getName());
+    configuration.set("fs.hdfs.impl", DistributedFileSystem.class.getName());
+    configuration.set("fs.file.impl", LocalFileSystem.class.getName());
+
     Map<String, String> options = new HashMap<>();
     options.put("header", String.valueOf(hasHeader));
     options.put("inferSchema", String.valueOf(inferSchema));
@@ -61,8 +64,8 @@ public class SparkReader {
       return null;
     }
     Configuration configuration = new Configuration();
-    configuration.set("fs.hdfs.impl", org.apache.hadoop.hdfs.DistributedFileSystem.class.getName());
-    configuration.set("fs.file.impl", org.apache.hadoop.fs.LocalFileSystem.class.getName());
+    configuration.set("fs.hdfs.impl", DistributedFileSystem.class.getName());
+    configuration.set("fs.file.impl", LocalFileSystem.class.getName());
 
     Map<String, String> options = new HashMap<>();
     options.put("header", String.valueOf(hasHeader));
@@ -79,8 +82,8 @@ public class SparkReader {
       return null;
     }
     Configuration configuration = new Configuration();
-    configuration.set("fs.hdfs.impl", org.apache.hadoop.hdfs.DistributedFileSystem.class.getName());
-    configuration.set("fs.file.impl", org.apache.hadoop.fs.LocalFileSystem.class.getName());
+    configuration.set("fs.hdfs.impl", DistributedFileSystem.class.getName());
+    configuration.set("fs.file.impl", LocalFileSystem.class.getName());
 
     Map<String, String> options = new HashMap<>();
     options.put("header", String.valueOf(hasHeader));
@@ -145,5 +148,4 @@ public class SparkReader {
     }
     return data;
   }
-
 }

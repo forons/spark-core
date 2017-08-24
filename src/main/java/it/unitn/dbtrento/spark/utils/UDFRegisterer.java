@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.spark.sql.SparkSession;
-import org.apache.spark.sql.api.java.UDF1;
+import org.apache.spark.sql.api.java.*;
 import org.apache.spark.sql.types.DataType;
 
 public class UDFRegisterer {
@@ -16,6 +16,107 @@ public class UDFRegisterer {
   }
 
   public static void addNewUDF(String name, UDF1<?, ?> udf, DataType dataType) {
+    udfList.add(new UDFFunction(name, udf, dataType));
+  }
+
+  public static void addNewUDF(String name, UDF2<?, ?, ?> udf, DataType dataType) {
+    udfList.add(new UDFFunction(name, udf, dataType));
+  }
+
+  public static void addNewUDF(String name, UDF3<?, ?, ?, ?> udf, DataType dataType) {
+    udfList.add(new UDFFunction(name, udf, dataType));
+  }
+
+  public static void addNewUDF(String name, UDF4<?, ?, ?, ?, ?> udf, DataType dataType) {
+    udfList.add(new UDFFunction(name, udf, dataType));
+  }
+
+  public static void addNewUDF(String name, UDF5<?, ?, ?, ?, ?, ?> udf, DataType dataType) {
+    udfList.add(new UDFFunction(name, udf, dataType));
+  }
+
+  public static void addNewUDF(String name, UDF6<?, ?, ?, ?, ?, ?, ?> udf, DataType dataType) {
+    udfList.add(new UDFFunction(name, udf, dataType));
+  }
+
+  public static void addNewUDF(String name, UDF7<?, ?, ?, ?, ?, ?, ?, ?> udf, DataType dataType) {
+    udfList.add(new UDFFunction(name, udf, dataType));
+  }
+
+  public static void addNewUDF(String name, UDF8<?, ?, ?, ?, ?, ?, ?, ?, ?> udf,
+      DataType dataType) {
+    udfList.add(new UDFFunction(name, udf, dataType));
+  }
+
+  public static void addNewUDF(String name, UDF9<?, ?, ?, ?, ?, ?, ?, ?, ?, ?> udf,
+      DataType dataType) {
+    udfList.add(new UDFFunction(name, udf, dataType));
+  }
+
+  public static void addNewUDF(String name, UDF10<?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?> udf,
+      DataType dataType) {
+    udfList.add(new UDFFunction(name, udf, dataType));
+  }
+
+  public static void addNewUDF(String name, UDF11<?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?> udf,
+      DataType dataType) {
+    udfList.add(new UDFFunction(name, udf, dataType));
+  }
+
+  public static void addNewUDF(String name, UDF12<?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?> udf,
+      DataType dataType) {
+    udfList.add(new UDFFunction(name, udf, dataType));
+  }
+
+  public static void addNewUDF(String name, UDF13<?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?> udf,
+      DataType dataType) {
+    udfList.add(new UDFFunction(name, udf, dataType));
+  }
+
+  public static void addNewUDF(String name, UDF14<?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?> udf,
+      DataType dataType) {
+    udfList.add(new UDFFunction(name, udf, dataType));
+  }
+
+  public static void addNewUDF(String name,
+      UDF15<?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?> udf, DataType dataType) {
+    udfList.add(new UDFFunction(name, udf, dataType));
+  }
+
+  public static void addNewUDF(String name,
+      UDF16<?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?> udf, DataType dataType) {
+    udfList.add(new UDFFunction(name, udf, dataType));
+  }
+
+  public static void addNewUDF(String name,
+      UDF17<?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?> udf, DataType dataType) {
+    udfList.add(new UDFFunction(name, udf, dataType));
+  }
+
+  public static void addNewUDF(String name,
+      UDF18<?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?> udf, DataType dataType) {
+    udfList.add(new UDFFunction(name, udf, dataType));
+  }
+
+  public static void addNewUDF(String name,
+      UDF19<?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?> udf, DataType dataType) {
+    udfList.add(new UDFFunction(name, udf, dataType));
+  }
+
+  public static void addNewUDF(String name,
+      UDF20<?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?> udf, DataType dataType) {
+    udfList.add(new UDFFunction(name, udf, dataType));
+  }
+
+  public static void addNewUDF(String name,
+      UDF21<?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?> udf,
+      DataType dataType) {
+    udfList.add(new UDFFunction(name, udf, dataType));
+  }
+
+  public static void addNewUDF(String name,
+      UDF22<?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?> udf,
+      DataType dataType) {
     udfList.add(new UDFFunction(name, udf, dataType));
   }
 

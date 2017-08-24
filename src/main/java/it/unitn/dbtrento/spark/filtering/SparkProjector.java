@@ -12,12 +12,17 @@ import scala.collection.JavaConversions;
 import scala.collection.Seq;
 
 public class SparkProjector {
+  
+  /*
+   * This function receives a dataset and a set of columns that should be returned. The columns can
+   * be specified as a set of column names or column indexes.
+   */
   protected static Dataset<Row> project(Dataset<Row> data, List<String> colsToKeep) {
-    String[] cols = data.columns();
-    List<Column> colsToKeepNames = new ArrayList<>();
-    if (colsToKeep == null) {
+    if (data == null || colsToKeep == null) {
       return data;
     }
+    String[] cols = data.columns();
+    List<Column> colsToKeepNames = new ArrayList<>();
     for (String col : colsToKeep) {
       String c = null;
       try {
