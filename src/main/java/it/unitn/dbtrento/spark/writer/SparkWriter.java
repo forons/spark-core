@@ -11,7 +11,6 @@ import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.FileUtil;
 import org.apache.hadoop.fs.Path;
 import org.apache.spark.sql.Dataset;
-import org.apache.spark.sql.Row;
 import org.apache.spark.sql.SaveMode;
 import org.apache.spark.sql.SparkSession;
 
@@ -19,26 +18,26 @@ import it.unitn.dbtrento.spark.utils.OutputFormat;
 
 public class SparkWriter {
 
-  public static boolean write(SparkSession spark, Dataset<Row> data, boolean hasHeader,
+  public static <T> boolean write(SparkSession spark, Dataset<T> data, boolean hasHeader,
       String outputPath, OutputFormat outputFormat) {
     Map<String, String> options = new HashMap<>();
     options.put("header", String.valueOf(hasHeader));
     return write(spark, data, options, outputPath, outputFormat);
   }
 
-  public static boolean write(SparkSession spark, Dataset<Row> data, boolean hasHeader,
+  public static <T> boolean write(SparkSession spark, Dataset<T> data, boolean hasHeader,
       String outputPath, OutputFormat outputFormat, String outputFile) {
     Map<String, String> options = new HashMap<>();
     options.put("header", String.valueOf(hasHeader));
     return write(spark, data, options, outputPath, outputFormat, outputFile);
   }
 
-  public static boolean write(SparkSession spark, Dataset<Row> data, Map<String, String> options,
+  public static <T> boolean write(SparkSession spark, Dataset<T> data, Map<String, String> options,
       String outputPath, OutputFormat outputFormat) {
     return write(spark, data, options, outputPath, outputFormat, "output");
   }
 
-  public static boolean write(SparkSession spark, Dataset<Row> data, Map<String, String> options,
+  public static <T> boolean write(SparkSession spark, Dataset<T> data, Map<String, String> options,
       String outputPath, OutputFormat outputFormat, String outputFile) {
     if (data == null) {
       System.out.println("Not able to write the data...");
@@ -78,8 +77,9 @@ public class SparkWriter {
           return false;
       }
     } catch (UnsupportedOperationException e) {
-      System.err.println(e.getMessage() + " while writing the data to " + outputPath.toString()
-          + " in " + outputFormat.toString() + " format.");
+      System.err
+          .printf("%s while writing the data to %s in %s format.\n", e.getMessage(), outputPath,
+              outputFormat.toString());
     }
     return false;
   }

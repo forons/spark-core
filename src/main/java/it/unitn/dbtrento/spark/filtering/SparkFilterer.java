@@ -20,7 +20,7 @@ public class SparkFilterer {
       List<String> colsToKeep) {
     Dataset<Row> support = data;
     support = SparkSelector.select(support, whiteList, blackList);
-    support = SparkProjector.project(support, colsToKeep);
+    support = SparkProjector.projectByName(support, colsToKeep);
     return support;
   }
 }

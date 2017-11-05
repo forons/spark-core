@@ -2,7 +2,6 @@ package it.unitn.dbtrento.spark.sql;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -56,7 +55,7 @@ public class QueriesExecutor {
   }
 
   public static List<Dataset<Row>> executeQueries(SparkSession spark,
-      List<Tuple2<String, String>> queries) throws IOException {
+      List<Tuple2<String, String>> queries) {
     List<Dataset<Row>> resultList = new ArrayList<>();
     Dataset<Row> result;
     for (Tuple2<String, String> tup : queries) {
@@ -67,15 +66,15 @@ public class QueriesExecutor {
   }
 
   private static List<Tuple2<String, String>> readQueries(String queriesFilePath, FileSystemType fs)
-      throws IOException, URISyntaxException {
+      throws IOException {
     File folder = new File(queriesFilePath);
     List<Tuple2<String, String>> list = new ArrayList<>();
     if (folder.isDirectory()) {
       File[] listOfFiles = folder.listFiles();
       System.out.println(folder.getAbsolutePath());
-      for (File file : listOfFiles) {
+      for (File file : listOfFiles != null ? listOfFiles : new File[0]) {
         if (file.isFile()) {
-          String query = null;
+          String query;
           switch (fs) {
             case FS:
               query = readQueryFromFS(file.getAbsolutePath());
@@ -97,8 +96,8 @@ public class QueriesExecutor {
   }
 
   public static String readQuery(String path, FileSystemType fs)
-      throws FileNotFoundException, IOException, URISyntaxException {
-    String query = null;
+      throws IOException {
+    String query;
     switch (fs) {
       case FS:
         query = readQueryFromFS(path);
@@ -112,14 +111,14 @@ public class QueriesExecutor {
     return query;
   }
 
-  private static String readQueryFromFS(String file) throws FileNotFoundException, IOException {
+  private static String readQueryFromFS(String file) {
     StringBuilder queryBuilder = new StringBuilder();
-    BufferedReader br = null;
+    BufferedReader br;
     try {
       br = new BufferedReader(new FileReader(file));
       String line;
       while ((line = br.readLine()) != null) {
-        queryBuilder.append(line + "\n");
+        queryBuilder.append(line).append("\n");
       }
     } catch (Exception e) {
       System.err.println("File not found " + file);
@@ -127,16 +126,16 @@ public class QueriesExecutor {
     return queryBuilder.toString();
   }
 
-  private static String readQueryFromHDFS(String hdfsPath) throws IOException, URISyntaxException {
+  private static String readQueryFromHDFS(String hdfsPath) {
     StringBuilder content = new StringBuilder();
-    FileSystem fs = null;
-    BufferedReader br = null;
+    FileSystem fs;
+    BufferedReader br;
     try {
       fs = FileSystem.get(new URI(hdfsPath), new Configuration());
       br = new BufferedReader(new InputStreamReader(fs.open(new Path(hdfsPath))));
       String line;
       while ((line = br.readLine()) != null) {
-        content = content.append(line + "\n");
+        content.append(line).append("\n");
       }
     } catch (Exception e) {
       System.err.println("File not found " + hdfsPath);

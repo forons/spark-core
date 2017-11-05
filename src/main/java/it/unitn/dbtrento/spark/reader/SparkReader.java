@@ -17,6 +17,7 @@ import scala.collection.JavaConversions;
 import scala.collection.Seq;
 
 public class SparkReader {
+
   public static Dataset<Row> read(SparkSession spark, boolean hasHeader, boolean inferSchema,
       InputFormat inputFormat, String inputPath) {
     if (inputPath == null) {
@@ -29,8 +30,7 @@ public class SparkReader {
     Map<String, String> options = new HashMap<>();
     options.put("header", String.valueOf(hasHeader));
     options.put("inferSchema", String.valueOf(inferSchema));
-    Dataset<Row> data = read(spark, options, inputFormat, inputPath);
-    return data;
+    return read(spark, options, inputFormat, inputPath);
   }
 
   public static Dataset<Row> read(SparkSession spark, boolean hasHeader, boolean inferSchema,
@@ -50,8 +50,7 @@ public class SparkReader {
     options.put("header", String.valueOf(hasHeader));
     options.put("inferSchema", String.valueOf(inferSchema));
 
-    Dataset<Row> data = read(spark, options, inputFormat, inputPath);
-    return data;
+    return read(spark, options, inputFormat, inputPath);
   }
 
   public static Dataset<Row> read(SparkSession spark, boolean hasHeader, boolean inferSchema,
@@ -71,8 +70,7 @@ public class SparkReader {
     options.put("header", String.valueOf(hasHeader));
     options.put("inferSchema", String.valueOf(inferSchema));
     Seq<String> elements = JavaConversions.asScalaBuffer(inputPath).seq();
-    Dataset<Row> data = read(spark, options, inputFormat, elements);
-    return data;
+    return read(spark, options, inputFormat, elements);
   }
 
   public static Dataset<Row> read(SparkSession spark, boolean hasHeader, boolean inferSchema,
@@ -88,8 +86,7 @@ public class SparkReader {
     Map<String, String> options = new HashMap<>();
     options.put("header", String.valueOf(hasHeader));
     options.put("inferSchema", String.valueOf(inferSchema));
-    Dataset<Row> data = read(spark, options, inputFormat, inputPath);
-    return data;
+    return read(spark, options, inputFormat, inputPath);
   }
 
   public static Dataset<Row> read(SparkSession spark, Map<String, String> options,

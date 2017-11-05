@@ -9,7 +9,7 @@ import org.apache.spark.sql.types.DataType;
 
 public class UDFRegisterer {
 
-  private static List<UDFFunction> udfList = new ArrayList<>();
+  private static final List<UDFFunction> udfList = new ArrayList<>();
 
   public static void addNewUDF(UDFFunction udf) {
     udfList.add(udf);

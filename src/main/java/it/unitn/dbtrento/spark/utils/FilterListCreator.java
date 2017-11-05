@@ -16,9 +16,10 @@ import org.apache.hadoop.fs.Path;
 import scala.Tuple2;
 
 public class FilterListCreator {
+
   public static List<Tuple2<String, String>> createFilterList(String filePath, FileSystemType fs)
       throws IOException {
-    List<Tuple2<String, String>> filterList = new ArrayList<>();
+    List<Tuple2<String, String>> filterList;
     switch (fs) {
       case FS:
         filterList = createFilterListFromFS(filePath);
@@ -33,7 +34,7 @@ public class FilterListCreator {
   }
 
   private static List<Tuple2<String, String>> createFilterListFromFS(String filePath) {
-    String line = "";
+    String line;
     String cvsSplitBy = ",";
     List<Tuple2<String, String>> filterList = new ArrayList<>();
     try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
@@ -50,13 +51,13 @@ public class FilterListCreator {
   }
 
   private static List<Tuple2<String, String>> createFilterListFromHDFS(String hdfsPath) {
-    List<Tuple2<String, String>> filterList = null;
-    FileSystem fs = null;
-    BufferedReader br = null;
+    List<Tuple2<String, String>> filterList;
+    FileSystem fs;
+    BufferedReader br;
     try {
       fs = FileSystem.get(new URI(hdfsPath), new Configuration());
       br = new BufferedReader(new InputStreamReader(fs.open(new Path(hdfsPath))));
-      String line = "";
+      String line;
       String cvsSplitBy = ",";
       filterList = new ArrayList<>();
       while ((line = br.readLine()) != null) {
@@ -73,7 +74,7 @@ public class FilterListCreator {
 
   public static List<String> createColumnList(String filePath, FileSystemType fs)
       throws IOException {
-    List<String> colsToKeep = null;
+    List<String> colsToKeep;
     switch (fs) {
       case FS:
         colsToKeep = createColumnListFromFS(filePath);
@@ -88,7 +89,7 @@ public class FilterListCreator {
   }
 
   private static List<String> createColumnListFromFS(String filePath) {
-    String line = "";
+    String line;
     List<String> colList = new ArrayList<>();
     try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
       while ((line = br.readLine()) != null) {
@@ -104,13 +105,13 @@ public class FilterListCreator {
 
 
   private static List<String> createColumnListFromHDFS(String hdfsPath) {
-    FileSystem fs = null;
-    BufferedReader br = null;
-    List<String> colList = null;
+    FileSystem fs;
+    BufferedReader br;
+    List<String> colList;
     try {
       fs = FileSystem.get(new URI(hdfsPath), new Configuration());
       br = new BufferedReader(new InputStreamReader(fs.open(new Path(hdfsPath))));
-      String line = "";
+      String line;
       colList = new ArrayList<>();
       while ((line = br.readLine()) != null) {
         if (!line.trim().startsWith("#") && !line.trim().isEmpty()) {
