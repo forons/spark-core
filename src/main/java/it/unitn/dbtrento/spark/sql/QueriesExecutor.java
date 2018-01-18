@@ -23,7 +23,7 @@ import scala.Tuple2;
 public class QueriesExecutor {
 
   public static Dataset<Row> executeQuery(SparkSession spark, String basePath, String queryFilePath,
-      FileSystemType fs) throws IOException, URISyntaxException {
+      FileSystemType fs) throws IOException {
     Tuple2<String, String> tup = new Tuple2<>(new File(queryFilePath).getName(),
         readQuery(basePath + "/" + queryFilePath, fs));
     Dataset<Row> result = null;
@@ -43,7 +43,7 @@ public class QueriesExecutor {
   }
 
   public static List<Dataset<Row>> executeQueries(SparkSession spark, String basePath,
-      String queriesFilePath, FileSystemType fs) throws IOException, URISyntaxException {
+      String queriesFilePath, FileSystemType fs) throws IOException {
     List<Tuple2<String, String>> queries = readQueries(basePath + "/" + queriesFilePath, fs);
     List<Dataset<Row>> resultList = new ArrayList<>();
     Dataset<Row> result;

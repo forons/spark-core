@@ -17,12 +17,7 @@ object SparkWriter {
             header: Boolean,
             path: String,
             outputFormat: OutputFormat.Value): Boolean = {
-    write(spark,
-      dataset,
-      Map("header" -> header.toString),
-      path,
-      outputFormat,
-      null)
+    write(spark, dataset, Map("header" -> header.toString), path, outputFormat)
   }
 
   def write(spark: SparkSession,
@@ -30,7 +25,11 @@ object SparkWriter {
             options: java.util.Map[String, String],
             path: String,
             outputFormat: OutputFormat.Value): Boolean = {
-    write(spark, dataset, JavaConversions.mapAsScalaMap(options).toMap, path, outputFormat)
+    write(spark,
+          dataset,
+          JavaConversions.mapAsScalaMap(options).toMap,
+          path,
+          outputFormat)
   }
 
   def write(spark: SparkSession,
@@ -39,9 +38,13 @@ object SparkWriter {
             path: String,
             outputFormat: OutputFormat.Value,
             filename: String): Boolean = {
-    write(spark, dataset, JavaConversions.mapAsScalaMap(options).toMap, path, outputFormat, filename)
+    write(spark,
+          dataset,
+          JavaConversions.mapAsScalaMap(options).toMap,
+          path,
+          outputFormat,
+          filename)
   }
-
 
   def write(spark: SparkSession,
             dataset: Dataset[_],
@@ -90,8 +93,8 @@ object SparkWriter {
               null
             )
           } catch {
-            case e@(_: IllegalArgumentException | _: IOException |
-                    _: URISyntaxException) =>
+            case e @ (_: IllegalArgumentException | _: IOException |
+                _: URISyntaxException) =>
               println("Error " + e.getMessage + "while writing the data!")
               e.printStackTrace()
               return false
@@ -106,10 +109,10 @@ object SparkWriter {
     } catch {
       case e: UnsupportedOperationException =>
         printf("%s while writing the data to %s/%s in %s format.\n",
-          e.getMessage,
-          path,
-          filename,
-          outputFormat.toString)
+               e.getMessage,
+               path,
+               filename,
+               outputFormat.toString)
     }
     false
   }

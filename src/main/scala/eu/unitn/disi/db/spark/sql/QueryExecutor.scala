@@ -3,27 +3,49 @@ package eu.unitn.disi.db.spark.sql
 import java.io._
 import java.net.URI
 
-import it.unitn.dbtrento.spark.utils.FileSystemType
+import eu.unitn.disi.db.spark.io.FSType
 import org.apache.hadoop.conf.Configuration
-import org.apache.hadoop.fs.{FileSystem, Path}
+import org.apache.hadoop.fs.{FileSystem, LocalFileSystem, Path}
+import org.apache.hadoop.hdfs.DistributedFileSystem
 import org.apache.spark.sql.{Dataset, Row, SparkSession}
 
 import scala.io.Source
 
-class QueryExecutor {
+object QueryExecutor {
 
   def executeQuery(spark: SparkSession,
                    path: String,
                    queryPath: String,
-                   fsType: FileSystemType): Dataset[Row] = {
-    var dataset: Dataset[Row] = null
+                   fsType: FSType.Value): Dataset[Row] = {
     try {
-      dataset = spark.sql(readQuery(path.concat("/").concat(queryPath), fsType))
+      spark.sql(readQuery(path.concat("/").concat(queryPath), fsType))
     } catch {
       case e: Exception =>
-        println("Exception " + e.getMessage + " in query " + queryPath)
+        println(s"Exception ${e.getMessage} in query  $queryPath")
+        null
     }
-    dataset
+  }
+
+  def executeQuery(spark: SparkSession,
+                   path: String,
+                   fsType: FSType.Value): Dataset[Row] = {
+    try {
+      spark.sql(readQuery(path, fsType))
+    } catch {
+      case e: Exception =>
+        println(s"Exception ${e.getMessage} in query  $path")
+        null
+    }
+  }
+
+  def executeQuery(spark: SparkSession, query: String): Dataset[Row] = {
+    try {
+      spark.sql(query)
+    } catch {
+      case e: Exception =>
+        println(s"Exception ${e.getMessage} in query  $query")
+        null
+    }
   }
 
   def executeQueries(spark: SparkSession,
@@ -31,62 +53,75 @@ class QueryExecutor {
     queries.map(tup => spark.sql(tup._2))
   }
 
-  def readQueries(path: String,
-                  fsType: FileSystemType): Seq[(String, String)] = {
-    // TODO change according to the FS type
-    // Now only the FS is supported
-    val folder = new File(path)
-    var queries = Seq[(String, String)]()
-    if (folder.isFile) {
-      queries :+= (folder.getName, readQuery(folder.getAbsolutePath, fsType))
-    } else if (folder.isDirectory) {
-      for (file <- if (folder.listFiles() != null) folder.listFiles()
-           else new Array[File](0)) {
-        if (file.isFile) {
-          queries :+= (file.getName, readQuery(file.getAbsolutePath, fsType))
-        }
-      }
-    }
-    queries
-  }
-
-  def readQuery(path: String, fsType: FileSystemType): String = {
-    var query: String = null
+  def readQueries(path: String, fsType: FSType.Value): Seq[(String, String)] = {
     fsType match {
-      case FileSystemType.FS   => query = readQueryFromFS(path)
-      case FileSystemType.HDFS => query = readQueryFromHDFS(path)
+      case FSType.FS =>
+        val folder = new File(path)
+        if (folder.isFile) {
+          Seq((folder.getName, readQuery(folder.getAbsolutePath, fsType)))
+        } else if (folder.isDirectory) {
+          folder
+            .listFiles()
+            .map(file =>
+              (file.getName, readQuery(file.getAbsolutePath, fsType)))
+            .toSeq
+        } else {
+          Seq[(String, String)]()
+        }
+      case FSType.HDFS =>
+        val conf = new Configuration
+        conf.set("fs.hdfs.impl", classOf[DistributedFileSystem].getName)
+        conf.set("fs.file.impl", classOf[LocalFileSystem].getName)
+        FileSystem
+          .get(new URI(path), conf)
+          .listStatus(new Path(path))
+          .map(status =>
+            (status.getPath.getName, readQuery(status.toString, fsType)))
+          .toSeq
       case _ =>
         throw new UnsupportedOperationException(
-          "FS type " + fsType + " not supported")
+          s"FS type $fsType not supported")
     }
-    query
   }
 
-  def readQueryFromFS(path: String): String = {
-    var query: String = null
-    try {
-      query = Source.fromFile(path).getLines().mkString("\n")
-    } catch {
-      case _: FileNotFoundException => println("File " + path + " not found!")
-      case _: IOException           => println("File " + path + " thrown an IOException!")
+  def readQuery(path: String, fsType: FSType.Value): String =
+    fsType match {
+      case FSType.FS => readQueryFromFS(path)
+      case FSType.HDFS => readQueryFromHDFS(path)
+      case _ =>
+        throw new UnsupportedOperationException(
+          s"FS type $fsType not supported")
     }
-    query
+
+  def readQueryFromFS(path: String): String = {
+    try {
+      Source.fromFile(path).getLines().mkString("\n")
+    } catch {
+      case _: FileNotFoundException =>
+        println(s"File $path not found!")
+        null
+      case _: IOException =>
+        println(s"File $path thrown an IOException!")
+        null
+    }
   }
 
   def readQueryFromHDFS(path: String): String = {
-    var query: String = null
     try {
       val fs = FileSystem.get(new URI(path), new Configuration)
       val bf = new BufferedReader(
         new InputStreamReader(fs.open(new Path(path))))
-      query = Stream
+      Stream
         .cons(bf.readLine(), Stream.continually(bf.readLine()))
         .takeWhile(_ != null)
         .mkString("\n")
     } catch {
-      case _: FileNotFoundException => println("File " + path + " not found!")
-      case _: IOException           => println("File " + path + " thrown an IOException!")
+      case _: FileNotFoundException =>
+        println(s"File $path not found!")
+        null
+      case _: IOException =>
+        println(s"File $path thrown an IOException!")
+        null
     }
-    query
   }
 }

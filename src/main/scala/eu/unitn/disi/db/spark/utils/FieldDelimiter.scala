@@ -6,7 +6,8 @@ object FieldDelimiter extends Enumeration {
     def getFieldDelimiter: Char = fieldDelimiter
   }
 
-  implicit def valueToFieldDelimiterVal(x: Value) = x.asInstanceOf[Val]
+  implicit def valueToFieldDelimiterVal(fieldDelimiter: Value) =
+    fieldDelimiter.asInstanceOf[Val]
 
   val COMMA = Val(',')
   val TAB = Val('\t')

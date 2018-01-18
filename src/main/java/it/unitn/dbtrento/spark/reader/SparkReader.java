@@ -112,7 +112,7 @@ public class SparkReader {
           break;
       }
     } catch (UnsupportedOperationException e) {
-      System.err.println(e.getMessage() + " while reading the data from " + inputPath.toString());
+      System.err.println(e.getMessage() + " while reading the data from " + inputPath);
     }
     return data;
   }
