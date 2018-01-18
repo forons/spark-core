@@ -9,9 +9,9 @@ import org.junit.Test
 class FilterTest {
 
   @Test
-  def filterTest(): Unit = {
+  def filterTestList(): Unit = {
     val spark: SparkSession = SparkSession.builder().appName("test").master("local").getOrCreate()
-    val dataset: Dataset[Row] = SparkReader.read(spark, header = true, inferSchema = true, CSV, "/Users/forons/Desktop/test_sample.csv")
+    val dataset: Dataset[Row] = SparkReader.read(spark, header = true, inferSchema = true, CSV, "src/test/resources/sample.csv")
     val whitelist = ("city", "san francisco") :: (0, 1) :: Nil
     val blacklist = ("name", "la taqueria") :: (0, 11) :: Nil
     val colsToKeep = "0" :: "city" :: "name" :: Nil
@@ -21,6 +21,22 @@ class FilterTest {
 
     val options = Map("header" -> "true", "inferSchema" -> "true")
 
-    SparkWriter.write(spark, result, options, "/Users/forons/Desktop/aaaa.csv", OutputFormat.CSV)
+    SparkWriter.write(spark, result, options, "out/out.csv", OutputFormat.CSV)
+  }
+
+  @Test
+  def filterTestMap(): Unit = {
+    val spark: SparkSession = SparkSession.builder().appName("test").master("local").getOrCreate()
+    val dataset: Dataset[Row] = SparkReader.read(spark, header = true, inferSchema = true, CSV, "src/test/resources/sample.csv")
+    val whitelist = Map("city" -> "san francisco", 0 -> (1 :: 2 :: Nil))
+    val blacklist = ("name", "la taqueria") :: (0, 11) :: Nil
+    val colsToKeep = "0" :: "city" :: "name" :: Nil
+
+    val result = Filter.applyFilter(dataset, whitelist, blacklist, colsToKeep)
+    result.show()
+
+    val options = Map("header" -> "true", "inferSchema" -> "true")
+
+    SparkWriter.write(spark, result, options, "out/out.csv", OutputFormat.CSV)
   }
 }
