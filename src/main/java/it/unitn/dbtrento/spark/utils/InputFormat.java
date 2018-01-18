@@ -1,7 +1,7 @@
 package it.unitn.dbtrento.spark.utils;
 
 public enum InputFormat {
-  CSV, PARQUET, TSV, SSV;
+  CSV, PARQUET, TSV, SSV, JSON;
 
   public char getFieldDelimiter() {
     switch (this) {

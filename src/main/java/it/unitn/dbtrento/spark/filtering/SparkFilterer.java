@@ -8,7 +8,7 @@ import org.apache.spark.sql.Row;
 import scala.Tuple2;
 
 public class SparkFilterer {
-  
+
   /*
    * This function filters a dataset.
    * It takes as input a dataset, two lists (a whitelist and a blacklist), and a list of columns to keep.
@@ -18,9 +18,7 @@ public class SparkFilterer {
   public static Dataset<Row> applyFiltering(Dataset<Row> data,
       List<Tuple2<String, String>> whiteList, List<Tuple2<String, String>> blackList,
       List<String> colsToKeep) {
-    Dataset<Row> support = data;
-    support = SparkSelector.select(support, whiteList, blackList);
-    support = SparkProjector.projectByName(support, colsToKeep);
-    return support;
+    Dataset<Row> support = SparkSelector.select(data, whiteList, blackList);
+    return SparkProjector.projectByName(support, colsToKeep);
   }
 }
