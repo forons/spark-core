@@ -15,7 +15,7 @@ To use this library, edit your pom.xml to match the following
 </project>
 ```
 Then include the artifact as follows
-
+```
 <project>
 ...
  <dependencies>
@@ -27,7 +27,7 @@ Then include the artifact as follows
  </dependencies>
  ...
 </project>
-
+```
 
 
 ## TO-DO
