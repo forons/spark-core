@@ -8,34 +8,25 @@ import org.apache.hadoop.conf.Configuration
 import org.apache.hadoop.fs.{FileSystem, LocalFileSystem, Path}
 import org.apache.hadoop.hdfs.DistributedFileSystem
 import org.apache.spark.sql.{Dataset, Row, SparkSession}
+import org.slf4j.{Logger, LoggerFactory}
 
 import scala.io.Source
 
 object QueryExecutor {
 
+  val log : Logger = LoggerFactory.getLogger(this.getClass.getName)
+
   def executeQuery(spark: SparkSession,
                    path: String,
                    queryPath: String,
                    fsType: FSType.Value): Dataset[Row] = {
-    try {
-      spark.sql(readQuery(path.concat("/").concat(queryPath), fsType))
-    } catch {
-      case e: Exception =>
-        println(s"Exception ${e.getMessage} in query  $queryPath")
-        null
-    }
+    executeQuery(spark, path.concat("/").concat(queryPath), fsType)
   }
 
   def executeQuery(spark: SparkSession,
                    path: String,
                    fsType: FSType.Value): Dataset[Row] = {
-    try {
-      spark.sql(readQuery(path, fsType))
-    } catch {
-      case e: Exception =>
-        println(s"Exception ${e.getMessage} in query  $path")
-        null
-    }
+    executeQuery(spark, readQuery(path, fsType))
   }
 
   def executeQuery(spark: SparkSession, query: String): Dataset[Row] = {
@@ -43,14 +34,14 @@ object QueryExecutor {
       spark.sql(query)
     } catch {
       case e: Exception =>
-        println(s"Exception ${e.getMessage} in query  $query")
+        log.error(s"Exception ${e.getMessage} in query  $query")
         null
     }
   }
 
   def executeQueries(spark: SparkSession,
                      queries: List[(String, String)]): Seq[Dataset[Row]] = {
-    queries.map(tup => spark.sql(tup._2))
+    queries.map(tup => executeQuery(spark, tup._2))
   }
 
   def readQueries(path: String, fsType: FSType.Value): Seq[(String, String)] = {
@@ -98,10 +89,10 @@ object QueryExecutor {
       Source.fromFile(path).getLines().mkString("\n")
     } catch {
       case _: FileNotFoundException =>
-        println(s"File $path not found!")
+        log.error(s"File $path not found!")
         null
       case _: IOException =>
-        println(s"File $path thrown an IOException!")
+        log.error(s"File $path thrown an IOException!")
         null
     }
   }
@@ -117,10 +108,10 @@ object QueryExecutor {
         .mkString("\n")
     } catch {
       case _: FileNotFoundException =>
-        println(s"File $path not found!")
+        log.error(s"File $path not found!")
         null
       case _: IOException =>
-        println(s"File $path thrown an IOException!")
+        log.error(s"File $path thrown an IOException!")
         null
     }
   }

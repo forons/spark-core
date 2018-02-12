@@ -5,10 +5,13 @@ import org.apache.hadoop.conf.Configuration
 import org.apache.hadoop.fs.LocalFileSystem
 import org.apache.hadoop.hdfs.DistributedFileSystem
 import org.apache.spark.sql.{Dataset, Row, SparkSession}
+import org.slf4j.{Logger, LoggerFactory}
 
 import scala.collection.Seq
 
 object SparkReader {
+
+  val log : Logger = LoggerFactory.getLogger(this.getClass.getName)
 
   def read(spark: SparkSession,
            header: Boolean,
@@ -39,8 +42,10 @@ object SparkReader {
            options: Map[String, String],
            inputFormat: InputFormat.Value,
            paths: String*): Dataset[Row] = {
-    if (paths == null || paths.exists(path => path.isEmpty || path == null))
+    if (paths == null || paths.exists(path => path.isEmpty || path == null)) {
+      log.debug(s"Error while parsing the path ${paths.toString()}")
       return null
+    }
 
     val configuration = new Configuration
     configuration.set("fs.hdfs.impl", classOf[DistributedFileSystem].getName)
@@ -73,12 +78,13 @@ object SparkReader {
             .csv(paths: _*)
         case InputFormat.JSON => reader.json(paths: _*)
         case inputType =>
+          log.error(s"Input type $inputType not supported")
           throw new UnsupportedOperationException(
             s"Input type $inputType not supported")
       }
     } catch {
       case e: Exception =>
-        println(
+        log.debug(
           s"${e.getMessage} while reading the data from ${paths.toString()}")
         null
     }

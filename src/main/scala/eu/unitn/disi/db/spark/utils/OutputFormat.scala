@@ -1,6 +1,11 @@
 package eu.unitn.disi.db.spark.utils
 
+import org.slf4j.{Logger, LoggerFactory}
+
 object OutputFormat extends Enumeration {
+
+  val log : Logger = LoggerFactory.getLogger(this.getClass.getName)
+
   val CSV, PARQUET, SINGLE_CSV, JSON = Value
 
   implicit def getFieldDelimiter(format: Value): Char = format match {
@@ -11,7 +16,7 @@ object OutputFormat extends Enumeration {
     case SINGLE_CSV =>
       FieldDelimiter.TAB.getFieldDelimiter
     case _ =>
-      System.err.println("Error while getting the field delimiter.")
+      log.error("Error while getting the field delimiter.")
       ','
   }
 }

@@ -7,10 +7,13 @@ import eu.unitn.disi.db.spark.utils.OutputFormat
 import org.apache.hadoop.conf.Configuration
 import org.apache.hadoop.fs.{FileSystem, FileUtil, Path}
 import org.apache.spark.sql.{Dataset, SaveMode, SparkSession}
+import org.slf4j.{Logger, LoggerFactory}
 
 import scala.collection.JavaConversions
 
 object SparkWriter {
+
+  val log : Logger = LoggerFactory.getLogger(this.getClass.getName)
 
   def write(spark: SparkSession,
             dataset: Dataset[_],
@@ -53,7 +56,7 @@ object SparkWriter {
             outputFormat: OutputFormat.Value,
             filename: String = "output"): Boolean = {
     if (dataset == null || path == null || path.isEmpty) {
-      System.out.println("Not able to write the data...")
+      log.debug("Not able to write the data...")
       return false
     }
     try {
@@ -95,8 +98,7 @@ object SparkWriter {
           } catch {
             case e @ (_: IllegalArgumentException | _: IOException |
                 _: URISyntaxException) =>
-              println("Error " + e.getMessage + "while writing the data!")
-              e.printStackTrace()
+              log.debug(s"Error ${e.getMessage} while writing the data!")
               return false
           }
           return true
@@ -108,11 +110,7 @@ object SparkWriter {
       }
     } catch {
       case e: UnsupportedOperationException =>
-        printf("%s while writing the data to %s/%s in %s format.\n",
-               e.getMessage,
-               path,
-               filename,
-               outputFormat.toString)
+        log.error(s"Error while writing the data to $path/$filename in ${outputFormat.toString} format.")
     }
     false
   }
