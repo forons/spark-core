@@ -106,7 +106,8 @@ object SparkWriter {
     } catch {
       case e: UnsupportedOperationException =>
         log.error(
-          s"Error ${e.getMessage} while writing the data to $path/$filename in ${format.toString} format.")
+          s"""Error ${e.getMessage} while writing the data to $path/$filename
+          in ${format.toString} format.""")
     }
     returnValue
   }

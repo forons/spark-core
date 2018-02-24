@@ -32,10 +32,24 @@ object SparkReader {
   }
 
   def read(spark: SparkSession,
+           options: java.util.Map[String, String],
+           inputFormat: Format,
+           path: String): Dataset[Row] = {
+    read(spark, Utils.javaToScalaMap(options), inputFormat, Seq(path): _*)
+  }
+
+  def read(spark: SparkSession,
            options: Map[String, String],
            inputFormat: Format,
            path: String): Dataset[Row] = {
     read(spark, options, inputFormat, Seq(path): _*)
+  }
+
+  def read(spark: SparkSession,
+           options: java.util.Map[String, String],
+           format: Format,
+           paths: String*): Dataset[Row] = {
+    read(spark, Utils.javaToScalaMap(options), format, paths: _*)
   }
 
   def read(spark: SparkSession,
