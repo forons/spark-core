@@ -7,10 +7,11 @@ import eu.unitn.disi.db.spark.io.FSType
 import org.apache.hadoop.conf.Configuration
 import org.apache.hadoop.fs.{FileSystem, LocalFileSystem, Path}
 import org.apache.hadoop.hdfs.DistributedFileSystem
-import org.apache.spark.sql.{Dataset, Row, SparkSession}
 import org.slf4j.{Logger, LoggerFactory}
-
 import scala.io.Source
+
+import org.apache.spark.sql.{Dataset, Row, SparkSession}
+
 
 object QueryExecutor {
 
@@ -19,13 +20,13 @@ object QueryExecutor {
   def executeQuery(spark: SparkSession,
                    path: String,
                    queryPath: String,
-                   fsType: FSType.Value): Dataset[Row] = {
+                   fsType: FSType): Dataset[Row] = {
     executeQuery(spark, path.concat("/").concat(queryPath), fsType)
   }
 
   def executeQuery(spark: SparkSession,
                    path: String,
-                   fsType: FSType.Value): Dataset[Row] = {
+                   fsType: FSType): Dataset[Row] = {
     executeQuery(spark, readQuery(path, fsType))
   }
 
@@ -44,7 +45,7 @@ object QueryExecutor {
     queries.map(tup => executeQuery(spark, tup._2))
   }
 
-  def readQueries(path: String, fsType: FSType.Value): Seq[(String, String)] = {
+  def readQueries(path: String, fsType: FSType): Seq[(String, String)] = {
     fsType match {
       case FSType.FS =>
         val folder = new File(path)
@@ -75,7 +76,7 @@ object QueryExecutor {
     }
   }
 
-  def readQuery(path: String, fsType: FSType.Value): String =
+  def readQuery(path: String, fsType: FSType): String =
     fsType match {
       case FSType.FS => readQueryFromFS(path)
       case FSType.HDFS => readQueryFromHDFS(path)

@@ -11,8 +11,9 @@
     <java.version>1.8</java.version>
     <maven.compiler.source>${java.version}</maven.compiler.source>
     <maven.compiler.target>${java.version}</maven.compiler.target>
-    <scala.version>2.11</scala.version>
-    <spark.version>2.2.1</spark.version>
+    <scala.version>2.11.8</scala.version>
+    <scala.binary.version>2.11</scala.binary.version>
+    <spark.version>2.2.0</spark.version>
     <hadoop.version>2.7.2</hadoop.version>
   </properties>
 
@@ -23,7 +24,7 @@
       <email>daniele.foroni@gmail.com</email>
       <url>http://disi.unitn.it/~forons</url>
       <organization>University of Trento - DbTrento</organization>
-      <organizationUrl>http://db.disi.unitn.eu/</organizationUrl>
+      <organizationUrl>http://disi.unitn.it/~foroni/</organizationUrl>
     </developer>
     <developer>
       <id>bluecopper</id>
@@ -42,12 +43,12 @@
   <dependencies>
     <dependency>
       <groupId>org.apache.spark</groupId>
-      <artifactId>spark-core_${scala.version}</artifactId>
+      <artifactId>spark-core_${scala.binary.version}</artifactId>
       <version>${spark.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.spark</groupId>
-      <artifactId>spark-sql_${scala.version}</artifactId>
+      <artifactId>spark-sql_${scala.binary.version}</artifactId>
       <version>${spark.version}</version>
     </dependency>
     <dependency>
@@ -65,10 +66,11 @@
 
   <build>
     <plugins>
+      <!-- This plugin compiles Scala files -->
       <plugin>
         <groupId>net.alchim31.maven</groupId>
         <artifactId>scala-maven-plugin</artifactId>
-        <version>3.2.2</version>
+        <version>3.3.1</version>
         <executions>
           <execution>
             <id>scala-compile-first</id>
@@ -86,6 +88,29 @@
             </goals>
           </execution>
         </executions>
+      </plugin>
+      <!-- This plugin compiles Java files -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.7.0</version>
+        <configuration>
+          <source>${maven.compiler.source}</source>
+          <target>${maven.compiler.target}</target>
+        </configuration>
+        <executions>
+          <execution>
+            <phase>compile</phase>
+            <goals>
+              <goal>compile</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>2.20.1</version>
       </plugin>
     </plugins>
   </build>

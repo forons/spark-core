@@ -1,22 +1,22 @@
 package eu.unitn.disi.db.spark.io
 
-import eu.unitn.disi.db.spark.utils.InputFormat
+import eu.unitn.disi.db.spark.utils.Utils
 import org.apache.hadoop.conf.Configuration
 import org.apache.hadoop.fs.LocalFileSystem
 import org.apache.hadoop.hdfs.DistributedFileSystem
-import org.apache.spark.sql.{Dataset, Row, SparkSession}
 import org.slf4j.{Logger, LoggerFactory}
-
 import scala.collection.Seq
+
+import org.apache.spark.sql.{DataFrameReader, Dataset, Row, SparkSession}
 
 object SparkReader {
 
-  val log : Logger = LoggerFactory.getLogger(this.getClass.getName)
+  val log: Logger = LoggerFactory.getLogger(this.getClass.getName)
 
   def read(spark: SparkSession,
            header: Boolean,
            inferSchema: Boolean,
-           inputFormat: InputFormat.Value,
+           inputFormat: Format,
            path: String): Dataset[Row] = {
     read(spark, header, inferSchema, inputFormat, Seq(path): _*)
   }
@@ -24,7 +24,7 @@ object SparkReader {
   def read(spark: SparkSession,
            header: Boolean,
            inferSchema: Boolean,
-           inputFormat: InputFormat.Value,
+           inputFormat: Format,
            paths: String*): Dataset[Row] = {
     val options =
       Map("header" -> header.toString, "inferSchema" -> inferSchema.toString)
@@ -33,14 +33,14 @@ object SparkReader {
 
   def read(spark: SparkSession,
            options: Map[String, String],
-           inputFormat: InputFormat.Value,
+           inputFormat: Format,
            path: String): Dataset[Row] = {
     read(spark, options, inputFormat, Seq(path): _*)
   }
 
   def read(spark: SparkSession,
            options: Map[String, String],
-           inputFormat: InputFormat.Value,
+           format: Format,
            paths: String*): Dataset[Row] = {
     if (paths == null || paths.exists(path => path.isEmpty || path == null)) {
       log.debug(s"Error while parsing the path ${paths.toString()}")
@@ -51,32 +51,13 @@ object SparkReader {
     configuration.set("fs.hdfs.impl", classOf[DistributedFileSystem].getName)
     configuration.set("fs.file.impl", classOf[LocalFileSystem].getName)
 
-    val reader =
-      if (options == null || options.isEmpty || inputFormat == InputFormat.TSV || inputFormat == InputFormat.SSV) {
-        spark.read
-      } else {
-        spark.read.options(options)
-      }
+    val reader: DataFrameReader = spark.read.options(Utils.addSeparatorToOptions(options, format))
 
     try {
-      inputFormat match {
-        case InputFormat.CSV     => reader.csv(paths: _*)
-        case InputFormat.PARQUET => reader.parquet(paths: _*)
-        case InputFormat.TSV =>
-          reader
-            .options(
-              options + ("sep" -> InputFormat
-                .getFieldDelimiter(InputFormat.TSV)
-                .toString))
-            .csv(paths: _*)
-        case InputFormat.SSV =>
-          reader
-            .options(
-              options + ("sep" -> InputFormat
-                .getFieldDelimiter(InputFormat.SSV)
-                .toString))
-            .csv(paths: _*)
-        case InputFormat.JSON => reader.json(paths: _*)
+      format match {
+        case Format.CSV | Format.SINGLE_CSV | Format.TSV => reader.csv(paths: _*)
+        case Format.PARQUET => reader.parquet(paths: _*)
+        case Format.JSON => reader.json(paths: _*)
         case inputType =>
           log.error(s"Input type $inputType not supported")
           throw new UnsupportedOperationException(

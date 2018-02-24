@@ -1,22 +1,26 @@
 package eu.unitn.disi.db.spark.filtering
 
-import eu.unitn.disi.db.spark.io.{SparkReader, SparkWriter}
-import eu.unitn.disi.db.spark.utils.InputFormat.CSV
-import eu.unitn.disi.db.spark.utils.OutputFormat
-import org.apache.spark.sql.{Dataset, Row, SparkSession}
+import eu.unitn.disi.db.spark.io.{Format, SparkReader, SparkWriter}
 import org.junit.Test
+
+import org.apache.spark.sql.{Dataset, Row, SparkSession}
 
 class FilterTest {
 
   @Test
-  def filterTestList(): Unit = {
+  def scalaFilterListTest(): Unit = {
     val spark: SparkSession =
-      SparkSession.builder().appName("test").master("local").getOrCreate()
+      SparkSession
+        .builder()
+        .appName("test")
+        .master("local")
+        .config("spark.driver.host", "localhost")
+        .getOrCreate()
     val dataset: Dataset[Row] = SparkReader.read(
       spark,
       header = true,
       inferSchema = true,
-      CSV,
+      Format.CSV,
       "src/test/resources/sample.csv")
     val whitelist = ("city", "san francisco") :: (0, 1) :: Nil
     val blacklist = ("name", "la taqueria") :: (0, 11) :: Nil
@@ -27,18 +31,18 @@ class FilterTest {
 
     val options = Map("header" -> "true", "inferSchema" -> "true")
 
-    SparkWriter.write(spark, result, options, "out/out.csv", OutputFormat.CSV)
+    SparkWriter.write(spark, result, options, "out/out.csv", Format.CSV)
   }
 
   @Test
-  def filterTestMap(): Unit = {
+  def scalaFilterMapTest(): Unit = {
     val spark: SparkSession =
       SparkSession.builder().appName("test").master("local").getOrCreate()
     val dataset: Dataset[Row] = SparkReader.read(
       spark,
       header = true,
       inferSchema = true,
-      CSV,
+      Format.CSV,
       "src/test/resources/sample.csv")
     val whitelist = Map("city" -> "san francisco", 0 -> (1 :: 2 :: Nil))
     val blacklist = ("name", "la taqueria") :: (0, 11) :: Nil
@@ -49,6 +53,6 @@ class FilterTest {
 
     val options = Map("header" -> "true", "inferSchema" -> "true")
 
-    SparkWriter.write(spark, result, options, "out/out.csv", OutputFormat.CSV)
+    SparkWriter.write(spark, result, options, "out/out.csv", Format.CSV)
   }
 }

@@ -1,20 +1,26 @@
 package eu.unitn.disi.db.spark.sql
 
-import eu.unitn.disi.db.spark.io.{FSType, SparkReader}
-import eu.unitn.disi.db.spark.utils.InputFormat.CSV
-import org.apache.spark.sql.{Dataset, Row, SparkSession}
+import eu.unitn.disi.db.spark.io.{Format, FSType, SparkReader}
 import org.junit.Test
+
+import org.apache.spark.sql.{Dataset, Row, SparkSession}
+
 
 class SQLTest {
   @Test
-  def testQueryExecutorJava(): Unit = {
+  def scalaQueryExecutorTest(): Unit = {
     val spark: SparkSession =
-      SparkSession.builder().appName("test").master("local").getOrCreate()
+      SparkSession
+        .builder()
+        .appName("test")
+        .master("local")
+        .config("spark.driver.host", "localhost")
+        .getOrCreate()
     val dataset: Dataset[Row] = SparkReader.read(
       spark,
       header = true,
       inferSchema = true,
-      CSV,
+      Format.CSV,
       "src/test/resources/sample.csv")
     dataset.createOrReplaceTempView("tableTest")
     val query = "SELECT * FROM tableTest"

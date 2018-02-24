@@ -1,25 +1,23 @@
 package eu.unitn.disi.db.spark.io
 
-import java.io.IOException
-import java.net.{URI, URISyntaxException}
+import java.net.URI
 
-import eu.unitn.disi.db.spark.utils.OutputFormat
+import eu.unitn.disi.db.spark.utils.Utils
 import org.apache.hadoop.conf.Configuration
 import org.apache.hadoop.fs.{FileSystem, FileUtil, Path}
-import org.apache.spark.sql.{Dataset, SaveMode, SparkSession}
 import org.slf4j.{Logger, LoggerFactory}
 
-import scala.collection.JavaConversions
+import org.apache.spark.sql.{DataFrameWriter, Dataset, SaveMode, SparkSession}
 
 object SparkWriter {
 
-  val log : Logger = LoggerFactory.getLogger(this.getClass.getName)
+  val log: Logger = LoggerFactory.getLogger(this.getClass.getName)
 
   def write(spark: SparkSession,
             dataset: Dataset[_],
             header: Boolean,
             path: String,
-            outputFormat: OutputFormat.Value): Boolean = {
+            outputFormat: Format): Boolean = {
     write(spark, dataset, Map("header" -> header.toString), path, outputFormat)
   }
 
@@ -27,57 +25,56 @@ object SparkWriter {
             dataset: Dataset[_],
             options: java.util.Map[String, String],
             path: String,
-            outputFormat: OutputFormat.Value): Boolean = {
+            outputFormat: Format): Boolean = {
     write(spark,
-          dataset,
-          JavaConversions.mapAsScalaMap(options).toMap,
-          path,
-          outputFormat)
+      dataset,
+      Utils.javaToScalaMap[String, String](options),
+      path,
+      outputFormat)
   }
 
   def write(spark: SparkSession,
             dataset: Dataset[_],
             options: java.util.Map[String, String],
             path: String,
-            outputFormat: OutputFormat.Value,
+            outputFormat: Format,
             filename: String): Boolean = {
     write(spark,
-          dataset,
-          JavaConversions.mapAsScalaMap(options).toMap,
-          path,
-          outputFormat,
-          filename)
+      dataset,
+      Utils.javaToScalaMap[String, String](options),
+      path,
+      outputFormat,
+      filename)
   }
 
   def write(spark: SparkSession,
             dataset: Dataset[_],
             options: Map[String, String],
             path: String,
-            outputFormat: OutputFormat.Value,
+            format: Format,
             filename: String = "output"): Boolean = {
     if (dataset == null || path == null || path.isEmpty) {
       log.debug("Not able to write the data...")
       return false
     }
-    try {
-      val writer = if (options != null && options.nonEmpty) {
-        outputFormat match {
-          case OutputFormat.SINGLE_CSV =>
-            dataset.coalesce(1).write.options(options).mode(SaveMode.Overwrite)
-          case _ => dataset.write.options(options).mode(SaveMode.Overwrite)
-        }
-      } else {
-        dataset.write.mode(SaveMode.Overwrite)
-      }
 
-      outputFormat match {
-        case OutputFormat.CSV =>
+    val writer: DataFrameWriter[_] = (format match {
+      case Format.SINGLE_CSV => dataset.coalesce(1).write
+      case _ => dataset.write
+    }).options(Utils.addSeparatorToOptions(options, format))
+      .mode(SaveMode.Overwrite)
+
+    var returnValue: Boolean = false
+
+    try {
+      returnValue = format match {
+        case Format.CSV | Format.SSV | Format.TSV =>
           writer.csv(path)
-          return true
-        case OutputFormat.PARQUET =>
-          writer.save(path)
-          return true
-        case OutputFormat.SINGLE_CSV =>
+          true
+        case Format.PARQUET =>
+          writer.parquet(path)
+          true
+        case Format.SINGLE_CSV =>
           writer.csv(path + "/partial/")
           try {
             val fullPath: String = if (filename.isEmpty || filename == null) {
@@ -95,23 +92,22 @@ object SparkWriter {
               spark.sparkContext.hadoopConfiguration,
               null
             )
+            true
           } catch {
-            case e @ (_: IllegalArgumentException | _: IOException |
-                _: URISyntaxException) =>
+            case e: Throwable =>
               log.debug(s"Error ${e.getMessage} while writing the data!")
-              return false
+              false
           }
-          return true
-        case OutputFormat.JSON =>
+        case Format.JSON =>
           writer.json(path)
-          return true;
-        case _ =>
-          return false
+          true
+        case _ => false
       }
     } catch {
       case e: UnsupportedOperationException =>
-        log.error(s"Error while writing the data to $path/$filename in ${outputFormat.toString} format.")
+        log.error(
+          s"Error ${e.getMessage} while writing the data to $path/$filename in ${format.toString} format.")
     }
-    false
+    returnValue
   }
 }
