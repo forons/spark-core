@@ -101,7 +101,9 @@ object SparkWriter {
         case Format.JSON =>
           writer.json(path)
           true
-        case _ => false
+        case _ =>
+          log.warn("Format not specified. The saving operation did not happen.")
+          false
       }
     } catch {
       case e: UnsupportedOperationException =>
