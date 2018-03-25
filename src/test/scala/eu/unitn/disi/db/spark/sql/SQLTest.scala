@@ -5,7 +5,6 @@ import org.junit.Test
 
 import org.apache.spark.sql.{Dataset, Row, SparkSession}
 
-
 class SQLTest {
   @Test
   def scalaQueryExecutorTest(): Unit = {

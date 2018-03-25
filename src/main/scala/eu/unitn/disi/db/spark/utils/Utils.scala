@@ -1,7 +1,7 @@
 package eu.unitn.disi.db.spark.utils
 
 import eu.unitn.disi.db.spark.io.Format
-import scala.collection.JavaConversions
+import scala.collection.JavaConverters._
 
 object Utils {
 
@@ -17,16 +17,13 @@ object Utils {
 
   def javaToScalaTupleList(list: java.util.List[_]): List[(_, _)] =
     if (list == null) null
-    else JavaConversions.asScalaBuffer(list).toList.asInstanceOf[List[(_, _)]]
+    else list.asScala.toList.asInstanceOf[List[(_, _)]]
 
-  //  def javaToScalaMap(map: java.util.Map[_, _]): Map[_, _] =
-  //    JavaConversions.mapAsScalaMap(map).toMap
-
-  def javaToScalaList(list: java.util.List[_]): List[_] =
+  def javaToScalaList[U](list: java.util.List[U]): List[U] =
     if (list == null) null
-    else JavaConversions.asScalaBuffer(list).toList
+    else list.asScala.toList
 
   def javaToScalaMap[T, U](map: java.util.Map[T, U]): Map[T, U] =
     if (map == null) null
-    else JavaConversions.mapAsScalaMap[T, U](map).toMap
+    else map.asScala.toMap
 }

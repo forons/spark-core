@@ -1,90 +1,100 @@
 package eu.unitn.disi.db.spark.filtering
 
 import eu.unitn.disi.db.spark.utils.Utils
+
 import org.apache.spark.sql.Dataset
 import org.apache.spark.sql.functions.col
 
 object Select {
 
-  def applySelect(dataset: Dataset[_],
-                  whiteList: java.util.List[_],
-                  blackList: java.util.List[_]): Dataset[_] = {
-    Select.applySelect(dataset, Utils.javaToScalaTupleList(whiteList), Utils.javaToScalaTupleList(blackList))
+  def applySelect[U](dataset: Dataset[U],
+                     whiteList: java.util.List[_],
+                     blackList: java.util.List[_]): Dataset[U] = {
+    Select.applySelect(
+      dataset,
+      Utils.javaToScalaTupleList(whiteList),
+      Utils.javaToScalaTupleList(blackList))
   }
 
-  def applySelect(dataset: Dataset[_],
-                  whiteList: java.util.Map[_, _],
-                  blackList: java.util.Map[_, _]): Dataset[_] = {
+  def applySelect[U](dataset: Dataset[U],
+                     whiteList: java.util.Map[_, _],
+                     blackList: java.util.Map[_, _]): Dataset[U] = {
     Select.applySelect(dataset, Utils.javaToScalaMap(whiteList), Utils.javaToScalaMap(blackList))
   }
 
-  def applySelect(dataset: Dataset[_],
-                  whiteList: java.util.List[_],
-                  blackList: java.util.Map[_, _]): Dataset[_] = {
-    Select.applySelect(dataset, Utils.javaToScalaTupleList(whiteList), Utils.javaToScalaMap(blackList))
+  def applySelect[U](dataset: Dataset[U],
+                     whiteList: java.util.List[_],
+                     blackList: java.util.Map[_, _]): Dataset[U] = {
+    Select.applySelect(
+      dataset,
+      Utils.javaToScalaTupleList(whiteList),
+      Utils.javaToScalaMap(blackList))
   }
 
-  def applySelect(dataset: Dataset[_],
-                  whiteList: java.util.Map[_, _],
-                  blackList: java.util.List[_]): Dataset[_] = {
-    Select.applySelect(dataset, Utils.javaToScalaMap(whiteList), Utils.javaToScalaTupleList(blackList))
+  def applySelect[U](dataset: Dataset[U],
+                     whiteList: java.util.Map[_, _],
+                     blackList: java.util.List[_]): Dataset[U] = {
+    Select.applySelect(
+      dataset,
+      Utils.javaToScalaMap(whiteList),
+      Utils.javaToScalaTupleList(blackList))
   }
 
-  def applyBlackList(dataset: Dataset[_],
-                     blackList: java.util.List[_]): Dataset[_] = {
+  def applyBlackList[U](dataset: Dataset[U],
+                        blackList: java.util.List[_]): Dataset[U] = {
     Select.applyBlackList(dataset, Utils.javaToScalaTupleList(blackList))
   }
 
-  def applyBlackList(dataset: Dataset[_],
-                     blackList: java.util.Map[_, _]): Dataset[_] = {
+  def applyBlackList[U](dataset: Dataset[U],
+                        blackList: java.util.Map[_, _]): Dataset[U] = {
     Select.applyBlackList(dataset, Utils.javaToScalaMap(blackList))
   }
 
-  def applyWhiteList(dataset: Dataset[_],
-                     whiteList: java.util.List[_]): Dataset[_] = {
+  def applyWhiteList[U](dataset: Dataset[U],
+                        whiteList: java.util.List[_]): Dataset[U] = {
     Select.applyWhiteList(dataset, Utils.javaToScalaTupleList(whiteList))
   }
 
-  def applyWhiteList(dataset: Dataset[_],
-                     whiteList: java.util.Map[_, _]): Dataset[_] = {
+  def applyWhiteList[U](dataset: Dataset[U],
+                        whiteList: java.util.Map[_, _]): Dataset[U] = {
     Select.applyWhiteList(dataset, Utils.javaToScalaMap(whiteList))
   }
 
-  def applySelect(dataset: Dataset[_],
-                  whiteList: List[(_, _)],
-                  blackList: List[(_, _)]): Dataset[_] = {
+  def applySelect[U](dataset: Dataset[U],
+                     whiteList: List[(_, _)],
+                     blackList: List[(_, _)]): Dataset[U] = {
     if (dataset == null) return null
-    var support: Dataset[_] = dataset
+    var support: Dataset[U] = dataset
     if (blackList != null) support = applyBlackList(support, blackList)
     if (whiteList != null) support = applyWhiteList(support, whiteList)
     support
   }
 
-  def applySelect(dataset: Dataset[_],
-                  whiteList: Map[_, _],
-                  blackList: Map[_, _]): Dataset[_] = {
+  def applySelect[U](dataset: Dataset[U],
+                     whiteList: Map[_, _],
+                     blackList: Map[_, _]): Dataset[U] = {
     if (dataset == null) return null
-    var support: Dataset[_] = dataset
+    var support: Dataset[U] = dataset
     if (blackList != null) support = applyBlackList(support, blackList)
     if (whiteList != null) support = applyWhiteList(support, whiteList)
     support
   }
 
-  def applySelect(dataset: Dataset[_],
-                  whiteList: List[(_, _)],
-                  blackList: Map[_, _]): Dataset[_] = {
-    val support: Dataset[_] = applyBlackList(dataset, blackList)
+  def applySelect[U](dataset: Dataset[U],
+                     whiteList: List[(_, _)],
+                     blackList: Map[_, _]): Dataset[U] = {
+    val support: Dataset[U] = applyBlackList(dataset, blackList)
     applyWhiteList(support, whiteList)
   }
 
-  def applySelect(dataset: Dataset[_],
-                  whiteList: Map[_, _],
-                  blackList: List[(_, _)]): Dataset[_] = {
-    val support: Dataset[_] = applyBlackList(dataset, blackList)
+  def applySelect[U](dataset: Dataset[U],
+                     whiteList: Map[_, _],
+                     blackList: List[(_, _)]): Dataset[U] = {
+    val support: Dataset[U] = applyBlackList(dataset, blackList)
     applyWhiteList(support, whiteList)
   }
 
-  def matchTuple(dataset: Dataset[_], item: Any): String = {
+  def matchTuple[U](dataset: Dataset[U], item: Any): String = {
     item match {
       case _: Int => dataset.columns(item.asInstanceOf[Int])
       case _: String => item.asInstanceOf[String]
@@ -92,8 +102,8 @@ object Select {
     }
   }
 
-  def applyBlackList(dataset: Dataset[_],
-                     blackList: List[(_, _)]): Dataset[_] = {
+  def applyBlackList[U](dataset: Dataset[U],
+                        blackList: List[(_, _)]): Dataset[U] = {
     if (blackList == null || blackList.isEmpty || dataset == null) return dataset
     var condition =
       col(matchTuple(dataset, blackList.head._1)).notEqual(blackList.head._2)
@@ -104,12 +114,12 @@ object Select {
     dataset.filter(condition)
   }
 
-  def applyBlackList(dataset: Dataset[_], blackList: Map[_, _]): Dataset[_] = {
+  def applyBlackList[U](dataset: Dataset[U], blackList: Map[_, _]): Dataset[U] = {
     applyBlackList(dataset, fromMapToList(blackList))
   }
 
-  def applyWhiteList(dataset: Dataset[_],
-                     whiteList: List[(_, _)]): Dataset[_] = {
+  def applyWhiteList[U](dataset: Dataset[U],
+                        whiteList: List[(_, _)]): Dataset[U] = {
     if (whiteList == null || whiteList.isEmpty || dataset == null) return dataset
     var condition =
       col(matchTuple(dataset, whiteList.head._1)).equalTo(whiteList.head._2)
@@ -119,7 +129,7 @@ object Select {
     dataset.filter(condition)
   }
 
-  def applyWhiteList(dataset: Dataset[_], whiteList: Map[_, _]): Dataset[_] = {
+  def applyWhiteList[U](dataset: Dataset[U], whiteList: Map[_, _]): Dataset[U] = {
     applyWhiteList(dataset, fromMapToList(whiteList))
   }
 
