@@ -12,7 +12,6 @@ import scala.io.Source
 
 import org.apache.spark.sql.{Dataset, Row, SparkSession}
 
-
 object QueryExecutor {
 
   val log : Logger = LoggerFactory.getLogger(this.getClass.getName)
