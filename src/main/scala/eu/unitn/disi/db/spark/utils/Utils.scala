@@ -8,7 +8,11 @@ object Utils {
   def addSeparatorToOptions(options: Map[String, String],
                             format: Format): Map[String, String] =
     if (format == null) {
-      Map.empty
+      if (options != null) {
+        options
+      } else {
+        Map.empty
+      }
     } else if (options == null) {
       Map("sep" -> format.getFieldDelimiter.toString)
     } else {

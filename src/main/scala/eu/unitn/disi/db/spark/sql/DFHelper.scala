@@ -2,7 +2,7 @@ package eu.unitn.disi.db.spark.sql
 
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.{Dataset, Row, SparkSession}
-import org.apache.spark.sql.types.{LongType, StructField, StructType}
+import org.apache.spark.sql.types.{DataType, LongType, StructField, StructType}
 
 object DFHelper {
 
@@ -19,4 +19,10 @@ object DFHelper {
     )
     spark.createDataFrame(rows, schema)
   }
+
+  def getColumnType(df: Dataset[Row], column: String): DataType =
+    getColumnType(df, df.columns.indexOf(column))
+
+  def getColumnType(df: Dataset[Row], colIndex: Int) : DataType =
+    df.schema.fields(colIndex).dataType
 }
