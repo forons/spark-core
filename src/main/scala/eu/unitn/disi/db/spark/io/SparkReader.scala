@@ -33,6 +33,36 @@ object SparkReader {
 
   def read(spark: SparkSession,
            options: java.util.Map[String, String],
+           path: String): Dataset[Row] = {
+    read(spark,
+         Utils.javaToScalaMap(options),
+         fromExtension(path),
+         Seq(path): _*)
+  }
+
+  def read(spark: SparkSession,
+           options: Map[String, String],
+           path: String): Dataset[Row] = {
+    read(spark, options, fromExtension(path), Seq(path): _*)
+  }
+
+  def read(spark: SparkSession,
+           options: java.util.Map[String, String],
+           paths: String*): Dataset[Row] = {
+    read(spark,
+         Utils.javaToScalaMap(options),
+         fromExtension(paths: _*),
+         paths: _*)
+  }
+
+  def read(spark: SparkSession,
+           options: Map[String, String],
+           paths: String*): Dataset[Row] = {
+    read(spark, options, fromExtension(paths: _*), paths: _*)
+  }
+
+  def read(spark: SparkSession,
+           options: java.util.Map[String, String],
            inputFormat: Format,
            path: String): Dataset[Row] = {
     read(spark, Utils.javaToScalaMap(options), inputFormat, Seq(path): _*)
@@ -65,13 +95,15 @@ object SparkReader {
     configuration.set("fs.hdfs.impl", classOf[DistributedFileSystem].getName)
     configuration.set("fs.file.impl", classOf[LocalFileSystem].getName)
 
-    val reader: DataFrameReader = spark.read.options(Utils.addSeparatorToOptions(options, format))
+    val reader: DataFrameReader =
+      spark.read.options(Utils.addSeparatorToOptions(options, format))
 
     try {
       format match {
-        case Format.CSV | Format.SINGLE_CSV | Format.TSV => reader.csv(paths: _*)
+        case Format.CSV | Format.SINGLE_CSV | Format.TSV | Format.SSV =>
+          reader.csv(paths: _*)
         case Format.PARQUET => reader.parquet(paths: _*)
-        case Format.JSON => reader.json(paths: _*)
+        case Format.JSON    => reader.json(paths: _*)
         case inputType =>
           log.error(s"Input type $inputType not supported")
           throw new UnsupportedOperationException(
@@ -82,6 +114,41 @@ object SparkReader {
         log.debug(
           s"${e.getMessage} while reading the data from ${paths.toString()}")
         null
+    }
+  }
+
+  def fromExtension(format: String): Format = {
+    format
+      .substring(format.lastIndexOf("."))
+      .replace(".", "")
+      .trim()
+      .toUpperCase() match {
+      case "CSV"     => Format.CSV
+      case "TSV"     => Format.TSV
+      case "SSV"     => Format.SSV
+      case "PARQUET" => Format.PARQUET
+      case "JSON"    => Format.JSON
+      case inputType =>
+        log.error(s"Input type $inputType not supported")
+        throw new UnsupportedOperationException(
+          s"Input type $inputType not supported")
+    }
+  }
+
+  def fromExtension(formats: String*): Format = {
+    val values = formats.map(
+      format =>
+        format
+          .substring(format.lastIndexOf("."))
+          .trim()
+          .replace(".", "")
+          .toUpperCase)
+    if (values.distinct.size == 1) {
+      fromExtension(values.head)
+    } else {
+      log.error(s"Multiple extensions given as input, which is not supported")
+      throw new UnsupportedOperationException(
+        s"Multiple extensions given as input, which is not supported")
     }
   }
 }
